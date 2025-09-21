@@ -38,10 +38,10 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         buttons = pygame.key.get_pressed()
-        if buttons[pygame.K_LEFT]:
+        if buttons[pygame.K_LEFT] and player.x>0:
             player.orientation = -1
             player.x -= player.velocity
-        elif buttons[pygame.K_RIGHT]:
+        elif buttons[pygame.K_RIGHT] and player.x<width-225:
             player.orientation = 1
             player.x += player.velocity
         else:
