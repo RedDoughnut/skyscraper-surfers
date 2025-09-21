@@ -3,16 +3,13 @@ import pygame
 import math
 import time
 
-# Window
-pygame.init()
-pygame.display.set_caption("3d engine")
-width = engine.width
-height = engine.height
-fps = 60
-window = pygame.display.set_mode((width, height))
-
-if __name__ == "__main__":
-
+def main():
+    pygame.init()
+    pygame.display.set_caption("3d engine")
+    width = engine.width
+    height = engine.height
+    fps = 60
+    window = pygame.display.set_mode((width, height))
     # Player
     player_x = 150
     player_y = -200
@@ -49,3 +46,5 @@ if __name__ == "__main__":
 
         time_passed = time.time() - start_frametime
         pygame.time.delay(int(1000 / fps - time_passed))
+if __name__ == "__main__":
+    main()
