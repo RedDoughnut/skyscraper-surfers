@@ -15,9 +15,9 @@ if __name__ == "__main__":
 
     # Player
     player_x = 150
-    player_y = 0
+    player_y = -200
     player_z = 150
-    player_a = 0    # Horizontal angle
+    player_a = 0    # Horizontal angle4
     player_l = 180    # Vertical angle
     sensitivity = 160 / fps
     player_forward_speed = 128 / fps

@@ -74,6 +74,13 @@ def loadMap():
             v2 = v2 + 5
 loadMap()
 
+def updateMap(player_y):
+    for s in range(map.SECTOR_NUM):
+        for w in range(S[s].wall_start, S[s].wall_end):
+            if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
+                W[w].y1 += 600
+                W[w].y2 += 600
+
 def clipBehindPlayer(x1, y1, z1, x2, y2, z2):
     da = y1
     db = y2
@@ -146,14 +153,22 @@ def draw3D(player_x, player_y, player_z, player_a, player_l):
     world_z = [0, 0, 0, 0]
     CS = math.cos(math.radians(player_a))
     SN = math.sin(math.radians(player_a))
-    
-    # Sort sectors by distance
+    updateMap(player_y)
+
+    # First compute distances for sorting
+    for s in range(map.SECTOR_NUM):
+        # Use midpoint of sector as a simple distance measure
+        wx = (W[S[s].wall_start].x1 + W[S[s].wall_end - 1].x2) / 2
+        wy = (W[S[s].wall_start].y1 + W[S[s].wall_end - 1].y2) / 2
+        S[s].d = distance(player_x, player_y, wx, wy)
+
     for s in range(map.SECTOR_NUM):
         for w in range(map.SECTOR_NUM-s-1):
             if S[w].d < S[w + 1].d:
                 st = S[w]
                 S[w] = S[w + 1]
                 S[w + 1] = st
+
     
     for s in range(map.SECTOR_NUM):
         if player_z < S[s].z1:
@@ -171,7 +186,6 @@ def draw3D(player_x, player_y, player_z, player_a, player_l):
             cycles = 1
 
         for frontBack in range(cycles):
-            S[s].d = 0
             for w in range (S[s].wall_start, S[s].wall_end):
                 # Point world location (no tilting)
                 x1 = W[w].x1 - player_x; y1 = W[w].y1 - player_y
@@ -218,5 +232,5 @@ def draw3D(player_x, player_y, player_z, player_a, player_l):
                 
                 # Draw points
                 drawWall(world_x[0], world_x[1], world_y[0], world_y[1], world_y[2], world_y[3], W[w].color, s, w, frontBack)
-            S[s].d = S[s].d / (S[s].wall_end - S[s].wall_start)
+            
     return framebuffer
