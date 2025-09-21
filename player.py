@@ -15,4 +15,5 @@ class Player(pygame.sprite.Sprite):
             player = pygame.image.load("assets/spaceship_idle.png").convert_alpha()
         elif self.orientation == 1:
             player = pygame.image.load("assets/spaceship_right.png").convert_alpha()
+        player = pygame.image.load("assets/white.png")
         self.window.blit(player, (self.x, self.y))
