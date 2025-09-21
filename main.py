@@ -14,17 +14,18 @@ def main():
     # Player
     PLAYER_VELOCITY = 10
     player = Player(window, PLAYER_VELOCITY)
-    player_x = 150
-    player_y = -200
-    player_z = 150
+    player_x = 100
+    player_y = -300
+    player_z = -100
     player_a = 0    # Horizontal angle4
     player_l = 180    # Vertical angle
     sensitivity = 160 / fps
-    player_forward_speed = 128 / fps
+    player_forward_speed = 16 / fps
     def cameraMovement():
         # Camera movement
         dx = 0
         dy = player_forward_speed
+        dy = 0
         dz = 0
         player_a = 0
         player_l = 180
@@ -38,15 +39,25 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         buttons = pygame.key.get_pressed()
+
+        dx, dy, dz, player_a, player_l = cameraMovement()
+        player.orientation = 0
         if buttons[pygame.K_LEFT]:
             player.orientation = -1
-            player.x -= player.velocity
-        elif buttons[pygame.K_RIGHT]:
+            # player.x -= player.velocity
+            dx = 10
+        if buttons[pygame.K_RIGHT]:
             player.orientation = 1
-            player.x += player.velocity
-        else:
+            # player.x += player.velocity
+            dx = -10
+        if buttons[pygame.K_LEFT] and buttons[pygame.K_RIGHT]:
             player.orientation = 0
-        dx, dy, dz, player_a, player_l = cameraMovement()
+        if buttons[pygame.K_UP]:
+            dz = 10
+        if buttons[pygame.K_DOWN]:
+            dz = -10
+        
+        
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
         window.fill((0, 0, 0))
 

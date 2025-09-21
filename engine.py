@@ -8,7 +8,7 @@ width = 1080
 height = int(width / aspect_ratio)
 
 # Camera
-focal_lenght = 300
+focal_lenght = 400
 focal_lenght_old = focal_lenght
 zoom = 3000
 
@@ -155,19 +155,19 @@ def draw3D(player_x, player_y, player_z, player_a, player_l):
     SN = math.sin(math.radians(player_a))
     updateMap(player_y)
 
-    # First compute distances for sorting
-    for s in range(map.SECTOR_NUM):
-        # Use midpoint of sector as a simple distance measure
-        wx = (W[S[s].wall_start].x1 + W[S[s].wall_end - 1].x2) / 2
-        wy = (W[S[s].wall_start].y1 + W[S[s].wall_end - 1].y2) / 2
-        S[s].d = distance(player_x, player_y, wx, wy)
+    # # First compute distances for sorting
+    # for s in range(map.SECTOR_NUM):
+    #     # Use midpoint of sector as a simple distance measure
+    #     wx = (W[S[s].wall_start].x1 + W[S[s].wall_end - 1].x2) / 2
+    #     wy = (W[S[s].wall_start].y1 + W[S[s].wall_end - 1].y2) / 2
+    #     S[s].d = distance(player_x, player_y, wx, wy)
 
-    for s in range(map.SECTOR_NUM):
-        for w in range(map.SECTOR_NUM-s-1):
-            if S[w].d < S[w + 1].d:
-                st = S[w]
-                S[w] = S[w + 1]
-                S[w + 1] = st
+    # for s in range(map.SECTOR_NUM):
+    #     for w in range(map.SECTOR_NUM-s-1):
+    #         if S[w].d < S[w + 1].d:
+    #             st = S[w]
+    #             S[w] = S[w + 1]
+    #             S[w + 1] = st
 
     
     for s in range(map.SECTOR_NUM):
