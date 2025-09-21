@@ -1,10 +1,11 @@
 import pygame
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, window: pygame.Surface):
+    def __init__(self, window: pygame.Surface, velocity):
         super().__init__()
         self.window = window
         self.orientation = 0
+        self.velocity = velocity
         self.x = window.get_width()//2
         self.y = window.get_height()//2
     def update(self):
