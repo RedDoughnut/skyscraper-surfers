@@ -104,7 +104,7 @@ def playerMovement():
     return dx, dz
     
 
-def updateMap(player_x, player_y, player_z, player_a):
+def updateMap(player_x, player_y, player_z, player_a, showPlayer):
     CS = math.cos(math.radians(player_a))
     SN = math.sin(math.radians(player_a))
     for s in range(map.SECTOR_NUM):
@@ -113,11 +113,11 @@ def updateMap(player_x, player_y, player_z, player_a):
                 if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
                     r = randint(-100,100)
                     for walls in range(S[s].wall_start, S[s].wall_end):
-                        W[walls].y1 += 1200
-                        W[walls].y2 += 1200
+                        W[walls].y1 += 600
+                        W[walls].y2 += 600
                         W[walls].x1 += r
                         W[walls].x2 += r
-        if S[s].sector_index == 1:
+        if S[s].sector_index == 1 and showPlayer:
             for w in range(S[s].wall_start, S[s].wall_end):
                 playerMovement()
                 # World Y position
@@ -201,14 +201,14 @@ def sector_distance(s, player_x, player_y):
 
 
 
-def draw3D(player_x, player_y, player_z, player_a, player_l):
+def draw3D(player_x, player_y, player_z, player_a, player_l, showPlayer):
     framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
     world_x = [0, 0, 0, 0]
     world_y = [0, 0, 0, 0]
     world_z = [0, 0, 0, 0]
     CS = math.cos(math.radians(player_a))
     SN = math.sin(math.radians(player_a))
-    updateMap(player_x, player_y, player_z, player_a)
+    updateMap(player_x, player_y - (not showPlayer)*200, player_z, player_a, showPlayer)
 
     # Compute distances
     for s in range(map.SECTOR_NUM):
