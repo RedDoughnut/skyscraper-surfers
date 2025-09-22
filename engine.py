@@ -31,7 +31,10 @@ class Walls():
     u = 0
     v = 0
     shade = 0
-
+    wy1 = 0
+    wy2 = 0
+    wx1 = 0
+    wx2 = 0
 class Sectors():
     wall_start = 0
     wall_end = 0
@@ -44,6 +47,7 @@ class Sectors():
     z2 = 0
     surface_texture = 0
     surface_scale = 0
+    sector_index = -1
 
 class TextureMaps():
     texture_width = 0
@@ -64,7 +68,8 @@ def loadMap():
         S[s].z2 = map.loadSectors()[v1 + 3] - map.loadSectors()[v1 + 2]
         S[s].color1 = map.loadSectors()[v1 + 4]
         S[s].color2 = map.loadSectors()[v1 + 5]
-        v1 = v1 + 6
+        S[s].sector_index = map.loadSectors()[v1 + 6]
+        v1 = v1 + 7
         for w in range(S[s].wall_start, S[s].wall_end):
             W[w].x1 = map.loadWalls()[v2+0]
             W[w].y1 = map.loadWalls()[v2+1]
@@ -72,14 +77,32 @@ def loadMap():
             W[w].y2 = map.loadWalls()[v2+3]
             W[w].color = map.loadWalls()[v2+4]
             v2 = v2 + 5
+            W[w].wy1 = W[w].y1
+            W[w].wy2 = W[w].y2
+            W[w].wx1 = W[w].x1
+            W[w].wx2 = W[w].x2
+            W[w].wy1 += 300
+            W[w].wy2 += 300
+        if S[s].sector_index == 1:
+            for w in range(S[s].wall_start, S[s].wall_end):
+                W[w].x1 += 112.5
+                W[w].x2 += 112.5
 loadMap()
 
-def updateMap(player_y):
+def updateMap(player_x, player_y, player_z, player_a):
+    CS = math.cos(math.radians(player_a))
+    SN = math.sin(math.radians(player_a))
     for s in range(map.SECTOR_NUM):
-        for w in range(S[s].wall_start, S[s].wall_end):
-            if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
-                W[w].y1 += 600
-                W[w].y2 += 600
+        if S[s].sector_index == 0:
+            for w in range(S[s].wall_start, S[s].wall_end):
+                if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
+                    W[w].y1 += 600
+                    W[w].y2 += 600
+        if S[s].sector_index == 1:
+            for w in range(S[s].wall_start, S[s].wall_end):
+                # World Y position
+                W[w].y1 = player_y + W[w].wy1
+                W[w].y2 = player_y + W[w].wy2
 
 def clipBehindPlayer(x1, y1, z1, x2, y2, z2):
     da = y1
@@ -143,7 +166,16 @@ def drawWall(x1, x2, b1, b2, t1, t2, color, s, w, frontBack):
                 framebuffer[x, int(y1):int(y2)] = S[s].color2
 
 
-    
+def sector_distance(s, player_x, player_y):
+    x_sum, y_sum, count = 0, 0, 0
+    for w in range(S[s].wall_start, S[s].wall_end):
+        x_sum += W[w].x1 + W[w].x2
+        y_sum += W[w].y1 + W[w].y2
+        count += 2
+    cx, cy = x_sum / count, y_sum / count
+    return (player_x - cx) ** 2 + (player_y - cy) ** 2  # squared distance
+
+
 
 def draw3D(player_x, player_y, player_z, player_a, player_l):
     global framebuffer
@@ -153,14 +185,21 @@ def draw3D(player_x, player_y, player_z, player_a, player_l):
     world_z = [0, 0, 0, 0]
     CS = math.cos(math.radians(player_a))
     SN = math.sin(math.radians(player_a))
-    updateMap(player_y)
+    updateMap(player_x, player_y, player_z, player_a)
 
-    # # First compute distances for sorting
+    # Compute distances
+    for s in range(map.SECTOR_NUM):
+        S[s].d = sector_distance(s, player_x, player_y)
+
+    S[:map.SECTOR_NUM] = sorted(S[:map.SECTOR_NUM], key=lambda sec: sec.d, reverse=True)
+
     # for s in range(map.SECTOR_NUM):
-    #     # Use midpoint of sector as a simple distance measure
-    #     wx = (W[S[s].wall_start].x1 + W[S[s].wall_end - 1].x2) / 2
-    #     wy = (W[S[s].wall_start].y1 + W[S[s].wall_end - 1].y2) / 2
-    #     S[s].d = distance(player_x, player_y, wx, wy)
+    #     S[s].d = 0
+    #     for w in range(S[s].wall_start, S[s].wall_end):
+    #         wx = (W[w].x1 + W[w].x2) / 2
+    #         wy = (W[w].y1 + W[w].y2) / 2
+    #         S[s].d += distance(player_x, player_y, wx, wy)
+    #     S[s].d /= (S[s].wall_end - S[s].wall_start)
 
     # for s in range(map.SECTOR_NUM):
     #     for w in range(map.SECTOR_NUM-s-1):
@@ -207,7 +246,6 @@ def draw3D(player_x, player_y, player_z, player_a, player_l):
                 world_y[1] = int(y2 * CS + x2 * SN)
                 world_y[2] = int(world_y[0])
                 world_y[3] = int(world_y[1])
-                S[s].d = S[s].d + distance(0, 0, (world_x[0] + world_x[1])/2, (world_y[0] + world_y[1])/2)
                 # World Z position
                 world_z[0] = int(S[s].z1 - player_z + ((player_l - 180) * world_y[0] / 64))
                 world_z[1] = int(S[s].z1 - player_z + ((player_l - 180) * world_y[1] / 64))
