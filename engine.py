@@ -139,7 +139,7 @@ def clipBehindPlayer(x1, y1, z1, x2, y2, z2):
     z1 = z1 + s * (z2 - z1)
     return x1, y1, z1
 
-def drawWall(x1, x2, b1, b2, t1, t2, color, s, w, frontBack):
+def drawWall(x1, x2, b1, b2, t1, t2, color, s, w, frontBack, framebuffer):
     dyb = b2 - b1
     dyt = t2 - t1
     dx = x2 - x1
@@ -200,7 +200,6 @@ def sector_distance(s, player_x, player_y):
 
 
 def draw3D(player_x, player_y, player_z, player_a, player_l):
-    global framebuffer
     framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
     world_x = [0, 0, 0, 0]
     world_y = [0, 0, 0, 0]
@@ -291,6 +290,6 @@ def draw3D(player_x, player_y, player_z, player_a, player_l):
                 world_x[3] = int(world_x[3] * focal_lenght / world_y[3] + width / 2); world_y[3] = int(world_z[3] * focal_lenght / world_y[3] + height / 2)
                 
                 # Draw points
-                drawWall(world_x[0], world_x[1], world_y[0], world_y[1], world_y[2], world_y[3], W[w].color, s, w, frontBack)
+                drawWall(world_x[0], world_x[1], world_y[0], world_y[1], world_y[2], world_y[3], W[w].color, s, w, frontBack, framebuffer)
             
     return framebuffer
