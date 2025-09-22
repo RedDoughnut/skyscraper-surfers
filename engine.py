@@ -5,7 +5,7 @@ import numpy
 from random import randint
 
 aspect_ratio = 16 / 9
-width = 1080
+width = 1200
 height = int(width / aspect_ratio)
 
 # Camera
@@ -35,18 +35,21 @@ class Walls():
     def get_width(self):
         return math.sqrt((self.x1 - self.x2)**2 + (self.y1 - self.y2)**2)
 class Sectors():
-    wall_start = 0
-    wall_end = 0
-    d = 0
-    color1 = (0, 0, 0)
-    color2 = (0, 0, 0)
-    surf = [0 for i in range(width)]
-    surface = 0
-    z1 = 0
-    z2 = 0
-    surface_texture = 0
-    surface_scale = 0
-    sector_index = -1
+    def __init__(self):
+        self.wall_start = 0
+        self.wall_end = 0
+        self.d = 0
+        self.color1 = (0, 0, 0)
+        self.color2 = (0, 0, 0)
+        self.surf = [0 for i in range(width)]
+        self.surface = 0
+        self.z1 = 0
+        self.z2 = 0
+        self.surface_texture = 0
+        self.surface_scale = 0
+        self.sector_index = -1
+class SectorGroup():
+    pass
 
 class TextureMaps():
     texture_width = 0
