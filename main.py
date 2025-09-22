@@ -5,7 +5,7 @@ import time
 
 def main():
     pygame.init()
-    pygame.display.set_caption("3d engine")
+    pygame.display.set_caption("Skyscraper Surfers")
     width = engine.width
     height = engine.height
     fps = 60
