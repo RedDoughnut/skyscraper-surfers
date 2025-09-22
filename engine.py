@@ -2,6 +2,7 @@ import math
 import map
 import pygame
 import numpy
+from random import randint
 
 aspect_ratio = 16 / 9
 width = 1080
@@ -14,27 +15,25 @@ zoom = 3000
 
 # Time
 last_tick = 0
-
-
-def distance(x1, y1, x2, y2):
-    distance = math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) 
-    return distance
 #_______________________________________________________________________________________
 
 class Walls():
-    x1 = 0
-    y1 = 0
-    x2 = 0
-    y2 = 0
-    color = (0, 0, 0)
-    wall_texture = 0
-    u = 0
-    v = 0
-    shade = 0
-    wy1 = 0
-    wy2 = 0
-    wx1 = 0
-    wx2 = 0
+    def __init__(self):
+        self.x1 = 0
+        self.y1 = 0
+        self.x2 = 0
+        self.y2 = 0
+        self.color = (0, 0, 0)
+        self.wall_texture = 0
+        self.u = 0
+        self.v = 0
+        self.shade = 0
+        self.wy1 = 0
+        self.wy2 = 0
+        self.wx1 = 0
+        self.wx2 = 0
+    def get_width(self):
+        return math.sqrt((self.x1 - self.x2)**2 + (self.y1 - self.y2)**2)
 class Sectors():
     wall_start = 0
     wall_end = 0
@@ -112,9 +111,12 @@ def updateMap(player_x, player_y, player_z, player_a):
         if S[s].sector_index == 0:
             for w in range(S[s].wall_start, S[s].wall_end):
                 if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
+                    r = randint(0,400)
                     for walls in range(S[s].wall_start, S[s].wall_end):
                         W[walls].y1 += 1200
                         W[walls].y2 += 1200
+                        W[walls].x1 = r
+                        W[walls].x2 = r
         if S[s].sector_index == 1:
             for w in range(S[s].wall_start, S[s].wall_end):
                 playerMovement()
