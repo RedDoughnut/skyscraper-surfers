@@ -13,8 +13,8 @@ def main():
     # Player
     player_x = 150
     player_y = 0
-    player_z = 200
-    player_a = 0    # Horizontal angle4
+    player_z = -50
+    player_a = 0    # Horizontal angle
     player_l = 180    # Vertical angle
     sensitivity = 30 / fps
     player_forward_speed = 1284 / fps
