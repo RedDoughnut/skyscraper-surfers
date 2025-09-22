@@ -16,15 +16,28 @@ def main():
     player_z = 200
     player_a = 0    # Horizontal angle4
     player_l = 180    # Vertical angle
-    sensitivity = 160 / fps
+    sensitivity = 30 / fps
     player_forward_speed = 1284 / fps
-    def cameraMovement():
+    def cameraMovement(player_a, player_l):
         # Camera movement
         dx = 0
         dy = player_forward_speed
         dz = 0
-        player_a = 0
-        player_l = 180
+        # Camera
+        # Horizontal angle
+        if buttons[pygame.K_LEFT]:
+            player_a -= sensitivity
+            if player_a < 0:
+                player_a = player_a + 360
+        if buttons[pygame.K_RIGHT]:
+            player_a += sensitivity
+            if player_a > 360:
+                player_a = player_a - 360
+        # Look angle
+        if buttons[pygame.K_DOWN]:
+            player_l -= sensitivity
+        if buttons[pygame.K_UP]:
+            player_l += sensitivity
 
         return dx, dy, dz, player_a, player_l
 
@@ -69,7 +82,7 @@ def main():
         if buttons[pygame.K_UP]:
             player_l += 3
 
-        return dx, dy, dz, player_a, player_l
+        return player_a, player_l
 
     running = True
     while running:
@@ -79,8 +92,8 @@ def main():
                 running = False
         buttons = pygame.key.get_pressed()
 
-        # dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l)
-        dx, dy, dz, player_a, player_l = cameraMovement()
+        # player_a, player_l = playerMovement(player_a, player_l)
+        dx, dy, dz, player_a, player_l = cameraMovement(player_a, player_l)
         
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
