@@ -89,6 +89,22 @@ def loadMap():
                 W[w].x2 += 112.5
 loadMap()
 
+def playerMovement():
+    buttons = pygame.key.get_pressed()
+    dx = 0
+    dz = 0
+    speed = 10
+    if buttons[pygame.K_UP]:
+        dz = -speed
+    if buttons[pygame.K_DOWN]:
+        dz = speed
+    if buttons[pygame.K_LEFT]:
+        dx = -speed
+    if buttons[pygame.K_RIGHT]:
+        dx = speed
+    return dx, dz
+    
+
 def updateMap(player_x, player_y, player_z, player_a):
     CS = math.cos(math.radians(player_a))
     SN = math.sin(math.radians(player_a))
@@ -97,13 +113,18 @@ def updateMap(player_x, player_y, player_z, player_a):
             for w in range(S[s].wall_start, S[s].wall_end):
                 if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
                     for walls in range(S[s].wall_start, S[s].wall_end):
-                        W[walls].y1 += 600
-                        W[walls].y2 += 600
+                        W[walls].y1 += 1200
+                        W[walls].y2 += 1200
         if S[s].sector_index == 1:
             for w in range(S[s].wall_start, S[s].wall_end):
+                playerMovement()
                 # World Y position
                 W[w].y1 = player_y + W[w].wy1
                 W[w].y2 = player_y + W[w].wy2
+                dx, dz = playerMovement()
+                W[w].x1 += dx
+                W[w].x2 += dx
+            S[s].z1 += dz
 
 def clipBehindPlayer(x1, y1, z1, x2, y2, z2):
     da = y1
