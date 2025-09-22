@@ -113,8 +113,8 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
                 if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
                     r = randint(-100,100)
                     for walls in range(S[s].wall_start, S[s].wall_end):
-                        W[walls].y1 += 600
-                        W[walls].y2 += 600
+                        W[walls].y1 += 1200
+                        W[walls].y2 += 1200
                         W[walls].x1 += r
                         W[walls].x2 += r
         if S[s].sector_index == 1 and showPlayer:
