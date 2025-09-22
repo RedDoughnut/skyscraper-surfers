@@ -96,8 +96,9 @@ def updateMap(player_x, player_y, player_z, player_a):
         if S[s].sector_index == 0:
             for w in range(S[s].wall_start, S[s].wall_end):
                 if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
-                    W[w].y1 += 600
-                    W[w].y2 += 600
+                    for walls in range(S[s].wall_start, S[s].wall_end):
+                        W[walls].y1 += 600
+                        W[walls].y2 += 600
         if S[s].sector_index == 1:
             for w in range(S[s].wall_start, S[s].wall_end):
                 # World Y position

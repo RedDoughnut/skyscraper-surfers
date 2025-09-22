@@ -79,8 +79,8 @@ def main():
                 running = False
         buttons = pygame.key.get_pressed()
 
-        # dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l)
-        dx, dy, dz, player_a, player_l = cameraMovement()
+        dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l)
+        # dx, dy, dz, player_a, player_l = cameraMovement()
         
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
