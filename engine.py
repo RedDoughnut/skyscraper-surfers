@@ -94,13 +94,13 @@ def playerMovement():
     dz = 0
     speed = 10
     if buttons[pygame.K_UP]:
-        dz = -speed
+        dz += -speed
     if buttons[pygame.K_DOWN]:
-        dz = speed
+        dz += speed
     if buttons[pygame.K_LEFT]:
-        dx = -speed
+        dx += -speed
     if buttons[pygame.K_RIGHT]:
-        dx = speed
+        dx += speed
     return dx, dz
     
 
