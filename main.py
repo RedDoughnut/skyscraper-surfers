@@ -2,6 +2,7 @@ import engine
 import pygame
 import math
 import time
+import numpy
 
 
 def main():
@@ -46,7 +47,9 @@ def main():
             window.fill((0,0,0))
             player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
-            framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False)
+            framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
+            framebuffer[:, height // 2: height] = (50, 50, 50)
+            framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
             pygame.surfarray.blit_array(window, framebuffer)
 
             buttons = pygame.key.get_pressed()
@@ -94,7 +97,9 @@ def main():
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
         window.fill((0, 0, 0))
-        framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True)
+        framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
+        framebuffer[:, height // 2: height] = (50, 50, 50)
+        framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
         pygame.surfarray.blit_array(window, framebuffer)
         score_text = small_font.render(f"{score}", True, (255,0,0))
         hiscore_text = small_font.render(f"HI: {highscore}", True, (255,0,0))

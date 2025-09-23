@@ -111,16 +111,20 @@ def playerMovement():
 def updateMap(player_x, player_y, player_z, player_a, showPlayer):
     CS = math.cos(math.radians(player_a))
     SN = math.sin(math.radians(player_a))
+    r = [None for i in range(map.GROUP_NUM)]
     for s in range(map.SECTOR_NUM):
         if S[s].sector_type == 0:
+            if r[S[s].groupid] is None:
+                r[S[s].groupid] = randint(-200, 200)
             for w in range(S[s].wall_start, S[s].wall_end):
                 if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
-                    r = randint(-100,100)
-                    for walls in range(S[s].wall_start, S[s].wall_end):
-                        W[walls].y1 += 1200
-                        W[walls].y2 += 1200
-                        W[walls].x1 = W[walls].wx1 + r
-                        W[walls].x2 = W[walls].wx2 + r
+                    for s1 in range(map.SECTOR_NUM):
+                        if S[s1].groupid == S[s].groupid:
+                            for walls in range(S[s1].wall_start, S[s1].wall_end):
+                                W[walls].y1 += 1200
+                                W[walls].y2 += 1200
+                                W[walls].x1 = W[walls].wx1 + r[S[s1].groupid]
+                                W[walls].x2 = W[walls].wx2 + r[S[s1].groupid]
         if S[s].sector_type == 1 and showPlayer:
             for w in range(S[s].wall_start, S[s].wall_end):
                 playerMovement()
@@ -205,8 +209,7 @@ def sector_distance(s, player_x, player_y):
 
 
 
-def draw3D(player_x, player_y, player_z, player_a, player_l, showPlayer):
-    framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
+def draw3D(player_x, player_y, player_z, player_a, player_l, showPlayer, framebuffer):
     world_x = [0, 0, 0, 0]
     world_y = [0, 0, 0, 0]
     world_z = [0, 0, 0, 0]
