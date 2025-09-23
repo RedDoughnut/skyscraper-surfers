@@ -34,6 +34,7 @@ class Walls():
         self.wx2 = 0
     def get_width(self):
         return math.sqrt((self.x1 - self.x2)**2 + (self.y1 - self.y2)**2)
+    
 class Sectors():
     def __init__(self):
         self.wall_start = 0
@@ -47,9 +48,8 @@ class Sectors():
         self.z2 = 0
         self.surface_texture = 0
         self.surface_scale = 0
-        self.sector_index = -1
-class SectorGroup():
-    pass
+        self.sector_type = -1
+        self.groupid = -1
 
 class TextureMaps():
     texture_width = 0
@@ -70,8 +70,9 @@ def loadMap():
         S[s].z2 = map.loadSectors()[v1 + 3] - map.loadSectors()[v1 + 2]
         S[s].color1 = map.loadSectors()[v1 + 4]
         S[s].color2 = map.loadSectors()[v1 + 5]
-        S[s].sector_index = map.loadSectors()[v1 + 6]
-        v1 = v1 + 7
+        S[s].sector_type = map.loadSectors()[v1 + 6]
+        S[s].groupid = map.loadSectors()[v1 + 7]
+        v1 = v1 + 8
         for w in range(S[s].wall_start, S[s].wall_end):
             W[w].x1 = map.loadWalls()[v2+0]
             W[w].y1 = map.loadWalls()[v2+1]
@@ -85,7 +86,7 @@ def loadMap():
             W[w].wx2 = W[w].x2
             W[w].wy1 += 300
             W[w].wy2 += 300
-        if S[s].sector_index == 1:
+        if S[s].sector_type == 1:
             for w in range(S[s].wall_start, S[s].wall_end):
                 W[w].x1 += 112.5
                 W[w].x2 += 112.5
@@ -111,16 +112,16 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
     CS = math.cos(math.radians(player_a))
     SN = math.sin(math.radians(player_a))
     for s in range(map.SECTOR_NUM):
-        if S[s].sector_index == 0:
+        if S[s].sector_type == 0:
             for w in range(S[s].wall_start, S[s].wall_end):
                 if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
                     r = randint(-100,100)
                     for walls in range(S[s].wall_start, S[s].wall_end):
                         W[walls].y1 += 1200
                         W[walls].y2 += 1200
-                        W[walls].x1 += r
-                        W[walls].x2 += r
-        if S[s].sector_index == 1 and showPlayer:
+                        W[walls].x1 = W[walls].wx1 + r
+                        W[walls].x2 = W[walls].wx2 + r
+        if S[s].sector_type == 1 and showPlayer:
             for w in range(S[s].wall_start, S[s].wall_end):
                 playerMovement()
                 # World Y position

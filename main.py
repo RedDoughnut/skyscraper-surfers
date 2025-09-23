@@ -36,12 +36,12 @@ def main():
     dz = 0
 
     running = True
+    start_frametime = time.time()
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
         buttons = pygame.key.get_pressed()
-        start_frametime = time.time()
         if onTitleScreen:
             window.fill((0,0,0))
             player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
@@ -80,16 +80,17 @@ def main():
                 window.blit(text3, (window.get_width()//2 - text3.get_width()//2, 300))
                 window.blit(text4, (window.get_width()//2 - text4.get_width()//2, 350))
             pygame.display.flip()
-            time_passed = time.time() - start_frametime
-            pygame.time.delay(int(1000 / fps - time_passed))
+            frametime = time.time() - start_frametime
+            start_frametime = time.time()
+            pygame.time.delay(int(1000 / fps - frametime))
             continue
-
+        
         score += 1
         if score>highscore:
             highscore = score
-        # player_a, player_l = playerMovement(player_a, player_l)
+        # dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l, buttons)
         dx, dy, dz, player_a, player_l = cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity)
-        
+        # print(f"{player_x:}, {player_y:}, {player_z:}")
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
         window.fill((0, 0, 0))
@@ -105,8 +106,11 @@ def main():
             onTitleScreen = True
             screen = 0
             score = 0
-        time_passed = time.time() - start_frametime
-        pygame.time.delay(int(1000 / fps - time_passed))
+        frametime = time.time() - start_frametime
+        start_frametime = time.time()
+        # print(frametime * 1000)
+        
+        pygame.time.delay(int(1000 / fps - frametime))
 
 def cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity):
     # Camera movement
@@ -174,7 +178,7 @@ def playerMovement(player_a, player_l, buttons):
     if buttons[pygame.K_UP]:
         player_l += 3
 
-    return player_a, player_l
+    return dx, dy, dz, player_a, player_l
 
 if __name__ == "__main__":
     main()
