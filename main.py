@@ -119,10 +119,6 @@ def main():
         # print(f"{player_x:}, {player_y:}, {player_z:}")
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
-        if engine.collision2D(engine.plane_x, engine.plane_y):
-            onTitleScreen = True
-        # print(engine.collision2D(player_x, player_y))
-
 
         window.fill((0, 0, 0))
         framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
