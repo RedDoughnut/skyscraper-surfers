@@ -106,7 +106,35 @@ def playerMovement():
     if buttons[pygame.K_RIGHT]:
         dx += speed
     return dx, dz
-    
+
+def collision2D(x, y):
+    colliding = False
+    y_intersect_old = None
+    collision_counter = 0
+    for sector in S:
+        if sector.sector_type != 1:
+            for w in range(sector.wall_start, sector.wall_end):
+                x1 = W[w].x1
+                y1 = W[w].y1
+                x2 = W[w].x2
+                y2 = W[w].y2
+                if x1 == x2:
+                    continue
+
+                k = (y1 - y2) / (x1 - x2)
+                n = y1 - k * x1
+                y_intersect = k * x + n
+                if y_intersect_old != y_intersect:
+                    if y < y_intersect:
+                        if x1 <= x <= x2 or x2 <= x <= x1:
+                            collision_counter += 1
+                            y_intersect_old  = y_intersect
+
+            if collision_counter % 2 == 1:
+                colliding = True
+                return colliding
+    return False
+
 
 def updateMap(player_x, player_y, player_z, player_a, showPlayer):
     CS = math.cos(math.radians(player_a))
