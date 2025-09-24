@@ -172,7 +172,8 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
                 W[w].x1 += dx
                 W[w].x2 += dx
             S[s].z1 += dz
-    
+    if collision2D(plane.x, plane.y):
+        print("collision detected")
             
 
 def clipBehindPlayer(x1, y1, z1, x2, y2, z2):
