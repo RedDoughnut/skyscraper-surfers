@@ -61,7 +61,7 @@ def main():
                 player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
                 framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-                framebuffer[:, height // 2: height] = (50, 50, 50)
+                framebuffer[:, height // 2 - player_l + 180: height] = (50, 50, 50)
                 framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
                 pygame.surfarray.blit_array(window, framebuffer)
 
@@ -106,39 +106,45 @@ def main():
                 window.blit(text3, (window.get_width()//2 - text3.get_width()//2, 200))
                 window.blit(text4, (window.get_width()//2 - text4.get_width()//2, 250))
             pygame.display.flip()
-            frametime = time.time() - start_frametime
+            rendertime = time.time() - start_frametime
             start_frametime = time.time()
-            pygame.time.delay(int(1000 / fps - frametime))
+            pygame.time.delay(int(1000 / fps - rendertime))
             continue
         
         score += 1
         if score>highscore:
             highscore = score
-        # dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l, buttons)
-        dx, dy, dz, player_a, player_l = cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity)
+        dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l, buttons)
+        # dx, dy, dz, player_a, player_l = cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity)
         # print(f"{player_x:}, {player_y:}, {player_z:}")
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
+        print(engine.collision2D(player_x, player_y))
+
+
         window.fill((0, 0, 0))
         framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-        framebuffer[:, height // 2: height] = (50, 50, 50)
+        framebuffer[:, height // 2 + int(player_l*10) - 180*10: height] = (100, 255, 100)
         framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
         pygame.surfarray.blit_array(window, framebuffer)
+        
         score_text = small_font.render(f"{score}", True, (255,0,0))
-        hiscore_text = small_font.render(f"HI: {highscore}", True, (255,0,0))
+        hiscore_text = small_font.render(f"HI: {int(rendertime * 1000)}", True, (255,0,0))
         window.blit(score_text, (window.get_width()//2 - score_text.get_width()//2, 5))
         window.blit(hiscore_text, (window.get_width() - hiscore_text.get_width() - 5, 5))
-        pygame.display.flip()
 
+
+        pygame.display.flip()
         if buttons[pygame.K_q]:
             onTitleScreen = True
             screen = 0
             score = 0
+        # print(frametime * 1000)
+        rendertime = time.time() - start_frametime
+        # print(1000 / fps)
+        pygame.time.delay(int(1000 / fps - rendertime))
         frametime = time.time() - start_frametime
         start_frametime = time.time()
-        # print(frametime * 1000)
-        
-        pygame.time.delay(int(1000 / fps - frametime))
 
 def cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity):
     # Camera movement
@@ -148,12 +154,12 @@ def cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivit
     # Camera
     # Horizontal angle
     if buttons[pygame.K_LEFT]:
-        dx = -3
+        dx += -3
         player_a -= sensitivity
         if player_a < 0:
             player_a = player_a + 360
     if buttons[pygame.K_RIGHT]:
-        dx = 3
+        dx += 3
         player_a += sensitivity
         if player_a > 360:
             player_a = player_a - 360
