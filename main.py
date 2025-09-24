@@ -48,7 +48,7 @@ def main():
             player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
             framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-            framebuffer[:, height // 2: height] = (50, 50, 50)
+            framebuffer[:, height // 2 - player_l + 180: height] = (50, 50, 50)
             framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
             pygame.surfarray.blit_array(window, framebuffer)
 
@@ -98,7 +98,7 @@ def main():
 
         window.fill((0, 0, 0))
         framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-        framebuffer[:, height // 2: height] = (0, 100, 0)
+        framebuffer[:, height // 2 + int(player_l*10) - 180*10: height] = (100, 255, 100)
         framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
         pygame.surfarray.blit_array(window, framebuffer)
         score_text = small_font.render(f"{score}", True, (255,0,0))
