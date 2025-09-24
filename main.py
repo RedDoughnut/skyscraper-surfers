@@ -1,5 +1,6 @@
 import engine
 import pygame
+from pygame import mixer
 import math
 import time
 import numpy
@@ -7,17 +8,26 @@ import numpy
 
 def main():
     pygame.init()
+    pygame.font.init()
+    mixer.init()
+
+    volume = 0.7
+
+    mixer.music.load("assets/ACybersWorld.mp3")
+    mixer.music.set_volume(volume)
+    mixer.music.play()
+
     pygame.display.set_caption("Skyscraper Surfers")
     width = engine.width
     height = engine.height
-    fps = 60
+    fps = 160
     font = pygame.font.Font('assets/8-bit-font.ttf', 30)
     small_font = pygame.font.Font('assets/8-bit-font.ttf', 18)
     window = pygame.display.set_mode((width, height))
 
     #Title Screen
     onTitleScreen = True
-    screen = 0 # 0 - main 1 - help
+    screen = 0 # 0 - main 1 - help 2 - settings
     ALL_KEYS_OFF = tuple([0] * len(pygame.key.get_pressed()))
     selectedOption = 0
     title_image = pygame.image.load("assets/title.png").convert_alpha()
@@ -36,6 +46,7 @@ def main():
     dy = player_forward_speed
     dz = 0
 
+    time_since_last = 0
     running = True
     start_frametime = time.time()
     while running:
@@ -45,31 +56,43 @@ def main():
         buttons = pygame.key.get_pressed()
         if onTitleScreen:
             window.fill((0,0,0))
-            player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
+            
+            if screen==0:
+                player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
-            framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-            framebuffer[:, height // 2: height] = (50, 50, 50)
-            framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
-            pygame.surfarray.blit_array(window, framebuffer)
+                framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
+                framebuffer[:, height // 2: height] = (50, 50, 50)
+                framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
+                pygame.surfarray.blit_array(window, framebuffer)
 
             buttons = pygame.key.get_pressed()
-            if buttons[pygame.K_DOWN] and selectedOption<1 and screen == 0:
+            if buttons[pygame.K_DOWN] and selectedOption<3 and screen == 0 and time.time() - time_since_last>0.2:
                 selectedOption+=1
-            if buttons[pygame.K_UP] and selectedOption>0 and screen == 0:
+                time_since_last = time.time()
+            if buttons[pygame.K_UP] and selectedOption>0 and screen == 0 and time.time() - time_since_last>0.2:
                 selectedOption-=1
+                time_since_last = time.time()
             if buttons[pygame.K_RETURN] or buttons[pygame.K_SPACE] and screen == 0:
                 if selectedOption == 0:
                     onTitleScreen = False
                 elif selectedOption == 1:
+                    screen = 2
+                elif selectedOption == 2:
                     screen = 1
+                elif selectedOption == 3:
+                    pygame.quit()    
             if screen == 0:
                 hiscore_text = font.render(f"HI: {highscore}", True, (255,0,0))
+                settings_text = font.render("SETTINGS", True, (255,0,0))
                 start_text = font.render("START", True, (255,0,0))
                 help_text = font.render("HELP", True, (255,0,0))
+                quit_text = font.render("QUIT", True, (255,0,0))
                 window.blit(hiscore_text, (window.get_width()//2 - hiscore_text.get_width()//2, 150))
-                window.blit(pointer, (500, 207+50*selectedOption))
+                window.blit(pointer, (450, 207+50*selectedOption))
                 window.blit(start_text, (window.get_width()//2 - start_text.get_width()//2, 200))
-                window.blit(help_text, (window.get_width()//2 - help_text.get_width()//2, 250))
+                window.blit(settings_text, (window.get_width()//2 - settings_text.get_width()//2, 250))
+                window.blit(help_text, (window.get_width()//2 - help_text.get_width()//2, 300))
+                window.blit(quit_text, (window.get_width()//2 - help_text.get_width()//2, 350))
                 window.blit(title_image, ((window.get_width() - title_image.get_width()) // 2, 5))
             elif screen == 1:
                 if buttons[pygame.K_q]:
@@ -78,10 +101,10 @@ def main():
                 text2 = font.render("IS TO AVOID ALL THE SKYSCRAPERS", True, (255,0,0))
                 text3 = font.render("USE ARROW KEYS FOR CONTROLS", True, (255,0,0))
                 text4 = font.render("PRESS Q TO LEAVE", True, (255,0,0))
-                window.blit(text1, (window.get_width()//2 - text1.get_width()//2, 200))
-                window.blit(text2, (window.get_width()//2 - text2.get_width()//2, 250))
-                window.blit(text3, (window.get_width()//2 - text3.get_width()//2, 300))
-                window.blit(text4, (window.get_width()//2 - text4.get_width()//2, 350))
+                window.blit(text1, (window.get_width()//2 - text1.get_width()//2, 100))
+                window.blit(text2, (window.get_width()//2 - text2.get_width()//2, 150))
+                window.blit(text3, (window.get_width()//2 - text3.get_width()//2, 200))
+                window.blit(text4, (window.get_width()//2 - text4.get_width()//2, 250))
             pygame.display.flip()
             frametime = time.time() - start_frametime
             start_frametime = time.time()
