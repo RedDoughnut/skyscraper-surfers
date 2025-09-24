@@ -83,9 +83,9 @@ def main():
                 window.blit(text3, (window.get_width()//2 - text3.get_width()//2, 300))
                 window.blit(text4, (window.get_width()//2 - text4.get_width()//2, 350))
             pygame.display.flip()
-            frametime = time.time() - start_frametime
+            rendertime = time.time() - start_frametime
             start_frametime = time.time()
-            pygame.time.delay(int(1000 / fps - frametime))
+            pygame.time.delay(int(1000 / fps - rendertime))
             continue
         
         score += 1
@@ -102,7 +102,7 @@ def main():
         framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
         pygame.surfarray.blit_array(window, framebuffer)
         score_text = small_font.render(f"{score}", True, (255,0,0))
-        hiscore_text = small_font.render(f"HI: {highscore}", True, (255,0,0))
+        hiscore_text = small_font.render(f"HI: {int(rendertime * 1000)}", True, (255,0,0))
         window.blit(score_text, (window.get_width()//2 - score_text.get_width()//2, 5))
         window.blit(hiscore_text, (window.get_width() - hiscore_text.get_width() - 5, 5))
         pygame.display.flip()
@@ -111,11 +111,13 @@ def main():
             onTitleScreen = True
             screen = 0
             score = 0
-        frametime = time.time() - start_frametime
-        start_frametime = time.time()
         # print(frametime * 1000)
-        
-        pygame.time.delay(int(1000 / fps - frametime))
+        rendertime = time.time() - start_frametime
+        # print(1000 / fps)
+        pygame.time.delay(int(1000 / fps - rendertime))
+        frametime = time.time() - start_frametime
+        print(frametime)
+        start_frametime = time.time()
 
 def cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity):
     # Camera movement
@@ -125,12 +127,12 @@ def cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivit
     # Camera
     # Horizontal angle
     if buttons[pygame.K_LEFT]:
-        dx = -3
+        dx += -3
         player_a -= sensitivity
         if player_a < 0:
             player_a = player_a + 360
     if buttons[pygame.K_RIGHT]:
-        dx = 3
+        dx += 3
         player_a += sensitivity
         if player_a > 360:
             player_a = player_a - 360
