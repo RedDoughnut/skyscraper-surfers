@@ -80,7 +80,7 @@ def main():
                 elif selectedOption == 2:
                     screen = 1
                 elif selectedOption == 3:
-                    pygame.quit()    
+                    pygame.quit()
             if screen == 0:
                 hiscore_text = font.render(f"HI: {highscore}", True, (255,0,0))
                 settings_text = font.render("SETTINGS", True, (255,0,0))
@@ -114,17 +114,19 @@ def main():
         score += 1
         if score>highscore:
             highscore = score
-        dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l, buttons)
-        # dx, dy, dz, player_a, player_l = cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity)
+        # dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l, buttons)
+        dx, dy, dz, player_a, player_l = cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity)
         # print(f"{player_x:}, {player_y:}, {player_z:}")
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
-        print(engine.collision2D(player_x, player_y))
+        if engine.collision2D(engine.plane_x, engine.plane_y):
+            onTitleScreen = True
+        # print(engine.collision2D(player_x, player_y))
 
 
         window.fill((0, 0, 0))
         framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-        framebuffer[:, height // 2 + int(player_l*10) - 180*10: height] = (100, 255, 100)
+        framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 255, 255)
         framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
         pygame.surfarray.blit_array(window, framebuffer)
         

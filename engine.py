@@ -1,7 +1,7 @@
 import math
 import map
 import pygame
-import numpy
+import sys
 from random import randint
 
 aspect_ratio = 16 / 9
@@ -57,12 +57,15 @@ class TextureMaps():
     texture_name = "placeholder"
 
 def loadMap():
-    global textures, W, S
+    global textures, W, S, plane_x, plane_y_start, plane_z
     textures = [TextureMaps() for i in range(64)]
     W = [Walls() for i in range(256)]
     S = [Sectors() for i in range(128)]
     v1 = 0
     v2 = 0
+    plane_x = 37.5 + 112.5
+    plane_y_start = 50
+    plane_z = 190
     for s in range(map.SECTOR_NUM):
         S[s].wall_start = map.loadSectors()[v1 + 0]
         S[s].wall_end = map.loadSectors()[v1 + 1]
@@ -86,7 +89,7 @@ def loadMap():
             W[w].wx2 = W[w].x2
             W[w].wy1 += 300
             W[w].wy2 += 300
-        if S[s].sector_type == 1:
+        if S[s].sector_type == 1 or S[s].sector_type == 2:
             for w in range(S[s].wall_start, S[s].wall_end):
                 W[w].x1 += 112.5
                 W[w].x2 += 112.5
@@ -112,7 +115,7 @@ def collision2D(x, y):
     y_intersect_old = None
     collision_counter = 0
     for sector in S:
-        if sector.sector_type != 1:
+        if sector.sector_type == 0:
             for w in range(sector.wall_start, sector.wall_end):
                 x1 = W[w].x1
                 y1 = W[w].y1
@@ -131,15 +134,23 @@ def collision2D(x, y):
                             y_intersect_old  = y_intersect
 
             if collision_counter % 2 == 1:
-                colliding = True
-                return colliding
+                return True
     return False
 
 
 def updateMap(player_x, player_y, player_z, player_a, showPlayer):
+    global plane_x, plane_y, plane_z
     CS = math.cos(math.radians(player_a))
     SN = math.sin(math.radians(player_a))
     r = [None for i in range(map.GROUP_NUM)]
+    dx, dz = playerMovement()
+    plane_x = 0
+    plane_y = 0
+    plane_z = 0
+    if showPlayer:
+        plane_x += dx
+        plane_y = player_y + 260 
+        plane_z += dz
     for s in range(map.SECTOR_NUM):
         if S[s].sector_type == 0:
             if r[S[s].groupid] is None:
@@ -153,16 +164,16 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
                                 W[walls].y2 += 1200
                                 W[walls].x1 = W[walls].wx1 + r[S[s1].groupid]
                                 W[walls].x2 = W[walls].wx2 + r[S[s1].groupid]
-        if S[s].sector_type == 1 and showPlayer:
+        if (S[s].sector_type == 1 or S[s].sector_type == 2) and showPlayer:
             for w in range(S[s].wall_start, S[s].wall_end):
-                playerMovement()
                 # World Y position
                 W[w].y1 = player_y + W[w].wy1
                 W[w].y2 = player_y + W[w].wy2
-                dx, dz = playerMovement()
                 W[w].x1 += dx
                 W[w].x2 += dx
             S[s].z1 += dz
+    
+            
 
 def clipBehindPlayer(x1, y1, z1, x2, y2, z2):
     da = y1
