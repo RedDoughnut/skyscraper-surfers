@@ -28,6 +28,10 @@ def main():
     small_font = pygame.font.Font('assets/8-bit-font.ttf', 18)
     window = pygame.display.set_mode((width, height))
 
+    #Icon
+    icon = pygame.image.load("assets/icon.png")
+    pygame.display.set_icon(icon)
+    
     #Title Screen
     onTitleScreen = True
     screen = 0 # 0 - main 1 - help 2 - settings
@@ -209,10 +213,10 @@ def main():
             mixer.music.load("assets/ACybersWorld.mp3")
             mixer.music.play(-1)
         # print(frametime * 1000)
-        pygame.time.delay(int(1000 / fps - rendertime))
+        
         rendertime = time.time() - start_frametime
         # print(1000 / fps)
-        
+        pygame.time.delay(int(1000 / fps - rendertime))
         frametime = time.time() - start_frametime
 
 
