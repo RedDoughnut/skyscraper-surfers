@@ -144,6 +144,10 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
                 W[w].x1 += dx
                 W[w].x2 += dx
             S[s].z1 += dz
+        if(S[s].sector_type == 3):
+            for w in range(S[s].wall_start, S[s].wall_end):
+                W[w].y1 = player_y + W[w].wy1
+                W[w].y2 = player_y + W[w].wy2
     if showPlayer:
         if collisions(plane_x, plane_y, plane_z):
             QUIT = True
@@ -289,7 +293,10 @@ def draw3D(player_x, player_y, player_z, player_a, player_l, showPlayer, framebu
 
     # Compute distances
     for s in range(map.SECTOR_NUM):
-        S[s].d = sector_distance(s, player_x, player_y)
+        if S[s].sector_type == 3:
+            S[s].d = 999999999
+        else:
+            S[s].d = sector_distance(s, player_x, player_y)
 
     S[:map.SECTOR_NUM] = sorted(S[:map.SECTOR_NUM], key=lambda sec: sec.d, reverse=True)
 
