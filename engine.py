@@ -120,7 +120,7 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
     dx, dz = playerMovement()
     if showPlayer:
         plane_x += dx
-        plane_y = player_y + 260 
+        plane_y = player_y + 300 
         plane_z += dz
     for s in range(map.SECTOR_NUM):
         if S[s].sector_type == 0:
@@ -150,6 +150,8 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
                 W[w].y2 = player_y + W[w].wy2
     if showPlayer:
         if collisions(plane_x, plane_y, plane_z):
+            QUIT = True
+        if collisions(plane_x, plane_y - 70, plane_z):
             QUIT = True
             # make it return to title screen
 def checkQuit():
