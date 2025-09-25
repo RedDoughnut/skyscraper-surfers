@@ -10,7 +10,7 @@ def main():
     pygame.init()
     pygame.font.init()
     mixer.init()
-
+    start_frametime = 0
     volume = 0.2
     sfx = True
 
@@ -23,7 +23,7 @@ def main():
     pygame.display.set_caption("Skyscraper Surfers")
     width = engine.width
     height = engine.height
-    fps = 60
+    fps = 30
     font = pygame.font.Font('assets/8-bit-font.ttf', 30)
     small_font = pygame.font.Font('assets/8-bit-font.ttf', 18)
     window = pygame.display.set_mode((width, height))
@@ -58,10 +58,10 @@ def main():
     time_since_last = 0
     running = True
     while running:
-        start_frametime = time.time()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+        start_frametime = time.time()
         buttons = pygame.key.get_pressed()
         if onTitleScreen:
             window.fill((0,0,0))
@@ -218,11 +218,12 @@ def main():
             mixer.music.load("assets/ACybersWorld.mp3")
             mixer.music.play(-1)
         # print(frametime * 1000)
-        
         rendertime = time.time() - start_frametime
+        
         # print(1000 / fps)
         pygame.time.delay(int(1000 / fps - rendertime))
         frametime = time.time() - start_frametime
+        start_frametime = time.time()
 
 
 def cameraMovement(player_a, player_l, buttons, player_forward_speed, speed, sensitivity):
