@@ -76,6 +76,8 @@ def main():
             if buttons[pygame.K_RETURN] or buttons[pygame.K_SPACE] and screen == 0:
                 if selectedOption == 0:
                     onTitleScreen = False
+                    mixer.music.load("assets/CORE.mp3")
+                    mixer.music.play(-1)
                 elif selectedOption == 1:
                     screen = 2
                 elif selectedOption == 2:
@@ -157,6 +159,8 @@ def main():
             player_z = -50
             player_a = 0 
             player_l = 180
+            mixer.music.load("assets/ACybersWorld.mp3")
+            mixer.music.play(-1)
             screen = 0
             dx, dz = 0, 0
             engine.loadMap()
@@ -179,6 +183,8 @@ def main():
             onTitleScreen = True
             screen = 0
             score = 0
+            mixer.music.load("assets/ACybersWorld.mp3")
+            mixer.music.play(-1)
         # print(frametime * 1000)
         rendertime = time.time() - start_frametime
         # print(1000 / fps)
