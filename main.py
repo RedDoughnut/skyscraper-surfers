@@ -18,6 +18,7 @@ def main():
     mixer.music.set_volume(volume)
     mixer.music.play(-1)
     boom = mixer.Sound("assets/explosion.mp3")
+    click = mixer.Sound("assets/click.wav")
     boom.set_volume(0.1)
 
     pygame.display.set_caption("Skyscraper Surfers")
@@ -54,8 +55,8 @@ def main():
     dy = player_forward_speed
     dz = 0
 
-    time_per_frame = 0
     time_since_last = 0
+    time_since_last_click = 0
     running = True
     while running:
         for event in pygame.event.get():
@@ -82,6 +83,9 @@ def main():
                 selectedOption-=1
                 time_since_last = time.time()
             if buttons[pygame.K_RETURN] or buttons[pygame.K_SPACE] and screen == 0:
+                if sfx and time.time() - time_since_last_click>0.3:
+                    click.play()
+                    time_since_last_click = time.time()
                 if selectedOption == 0:
                     onTitleScreen = False
                     mixer.music.load("assets/CORE.mp3")
@@ -93,7 +97,6 @@ def main():
                     player_a = 0 
                     player_l = 180
                     engine.loadMap()
-
                 elif selectedOption == 1:
                     screen = 2
                 elif selectedOption == 2:
@@ -141,10 +144,16 @@ def main():
                     sfx = not sfx
                     time_since_last = time.time()
                 if buttons[pygame.K_LEFT] and fps==60:
+                    if sfx and time.time() - time_since_last_click>0.2:
+                        click.play()
+                        time_since_last_click = time.time()
                     fps = 30
                 elif buttons[pygame.K_RIGHT] and fps==30:
+                    if sfx and time.time() - time_since_last_click>0.2:
+                        click.play()
+                        time_since_last_click = time.time()
                     fps = 60
-                volumetext = font.render("VOLUME", True, (255,0,0))
+                volumetext = font.render("MUSIC VOLUME", True, (255,0,0))
                 volumetext2 = font.render(f"{round(volume*100)}", True, (255,0,0))
                 sfxtext = font.render("SFX", True, (255,0,0))
                 fpstext1 = font.render("FPS", True, (255,0,0))
@@ -169,7 +178,7 @@ def main():
             pygame.time.delay(int(1000 / fps - rendertime))
             continue
         
-        score += 1
+        score += 1 * 60 // fps
         if score>highscore:
             highscore = score
         # dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l, buttons)
