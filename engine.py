@@ -116,7 +116,7 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
     global plane_x, plane_y, plane_z, QUIT
     CS = math.cos(math.radians(player_a))
     SN = math.sin(math.radians(player_a))
-    r = [None for i in range(map.GROUP_NUM)]
+    r = [[None, None] for i in range(map.GROUP_NUM)]
     dx, dz = playerMovement()
     if showPlayer:
         plane_x += dx
@@ -124,17 +124,18 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
         plane_z += dz
     for s in range(map.SECTOR_NUM):
         if S[s].sector_type == 0:
-            if r[S[s].groupid] is None:
-                r[S[s].groupid] = randint(-200, 200)
+            if r[S[s].groupid][0] is None:
+                r[S[s].groupid][0] = randint(-400, 400)
+                r[S[s].groupid][1] = randint(1000, 2000)
             for w in range(S[s].wall_start, S[s].wall_end):
                 if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
                     for s1 in range(map.SECTOR_NUM):
                         if S[s1].groupid == S[s].groupid:
                             for walls in range(S[s1].wall_start, S[s1].wall_end):
-                                W[walls].y1 += 1200
-                                W[walls].y2 += 1200
-                                W[walls].x1 = W[walls].wx1 + r[S[s1].groupid]
-                                W[walls].x2 = W[walls].wx2 + r[S[s1].groupid]
+                                W[walls].y1 += r[S[s1].groupid][1]
+                                W[walls].y2 += r[S[s1].groupid][1]
+                                W[walls].x1 = W[walls].wx1 + r[S[s1].groupid][0]
+                                W[walls].x2 = W[walls].wx2 + r[S[s1].groupid][0]
         if (S[s].sector_type == 1 or S[s].sector_type == 2) and showPlayer:
             for w in range(S[s].wall_start, S[s].wall_end):
                 # World Y position
@@ -160,7 +161,6 @@ def collisions(x, y, z):
     return False
 
 def collision2D(x, y, sector):
-    # y_intersect_old = None
     collision_counter = 0
     if sector.sector_type == 0:
         for w in range(sector.wall_start, sector.wall_end):
@@ -168,21 +168,42 @@ def collision2D(x, y, sector):
             y1 = W[w].y1
             x2 = W[w].x2
             y2 = W[w].y2
-            if x1 == x2:
+            # Ignore horizontal edges
+            if y1 == y2:
                 continue
-
-            k = (y1 - y2) / (x1 - x2)
-            n = y1 - k * x1
-            y_intersect = k * x + n
-            # if y_intersect_old != y_intersect:
-            if y < y_intersect:
-                if x1 <= x <= x2 or x2 <= x <= x1:
+            # Ray crosses edge if y is between y1 and y2
+            if ((y1 > y) != (y2 > y)):
+                x_intersect = (x2 - x1) * (y - y1) / (y2 - y1 + 1e-12) + x1
+                if x < x_intersect:
                     collision_counter += 1
-                    y_intersect_old  = y_intersect
-
         if collision_counter % 2 == 1:
             return True
     return False
+
+# def collision2D(x, y, sector):
+#     # y_intersect_old = None
+#     collision_counter = 0
+#     if sector.sector_type == 0:
+#         for w in range(sector.wall_start, sector.wall_end):
+#             x1 = W[w].x1
+#             y1 = W[w].y1
+#             x2 = W[w].x2
+#             y2 = W[w].y2
+#             if x1 == x2:
+#                 continue
+
+#             k = (y1 - y2) / (x1 - x2)
+#             n = y1 - k * x1
+#             y_intersect = k * x + n
+#             # if y_intersect_old != y_intersect:
+#             if y < y_intersect:
+#                 if x1 <= x <= x2 or x2 <= x <= x1:
+#                     collision_counter += 1
+#                     y_intersect_old  = y_intersect
+
+#         if collision_counter % 2 == 1:
+#             return True
+#     return False
 
 
 def clipBehindPlayer(x1, y1, z1, x2, y2, z2):
