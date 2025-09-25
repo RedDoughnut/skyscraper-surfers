@@ -23,7 +23,7 @@ def main():
     pygame.display.set_caption("Skyscraper Surfers")
     width = engine.width
     height = engine.height
-    fps = 160
+    fps = 60
     font = pygame.font.Font('assets/8-bit-font.ttf', 30)
     small_font = pygame.font.Font('assets/8-bit-font.ttf', 18)
     window = pygame.display.set_mode((width, height))
@@ -49,6 +49,7 @@ def main():
     player_l = 180    # Vertical angle
     sensitivity = 30 / fps
     player_forward_speed = 1280 / fps
+    left_right_speed = 480 / fps
     dx = 0
     dy = player_forward_speed
     dz = 0
@@ -163,7 +164,7 @@ def main():
         if score>highscore:
             highscore = score
         # dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l, buttons)
-        dx, dy, dz, player_a, player_l = cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity)
+        dx, dy, dz, player_a, player_l = cameraMovement(player_a, player_l, buttons, player_forward_speed, left_right_speed, sensitivity)
         # print(f"{player_x:}, {player_y:}, {player_z:}")
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
         window.fill((0, 0, 0))
@@ -171,6 +172,8 @@ def main():
         framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 100, 50)
         framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
         pygame.surfarray.blit_array(window, framebuffer)
+
+        engine.loadFps(fps)
 
         if engine.checkQuit():
             if score > read_highscore():
@@ -188,14 +191,7 @@ def main():
             mixer.music.play(-1)
             screen = 0
             dx, dy, dz = 0, 0, 0
-        
-        if engine.checkQuit():
-            onTitleScreen = True
-            boom.play() if sfx else None
-            mixer.music.load("assets/ACybersWorld.mp3")
-            mixer.music.play(-1)
-            screen = 0
-            dx, dy, dz = 0, 0, 0
+    
         
         score_text = small_font.render(f"{score}", True, (255,0,0))
         hiscore_text = small_font.render(f"HI: {highscore}", True, (255,0,0))
@@ -220,7 +216,7 @@ def main():
         frametime = time.time() - start_frametime
 
 
-def cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity):
+def cameraMovement(player_a, player_l, buttons, player_forward_speed, speed, sensitivity):
     # Camera movement
     dx = 0
     dy = player_forward_speed
@@ -228,12 +224,12 @@ def cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivit
     # Camera
     # Horizontal angle
     if buttons[pygame.K_LEFT]:
-        dx += -4 # was 3
+        dx += -speed  # was 3
         # player_a -= sensitivity
         # if player_a < 0:
         #     player_a = player_a + 360
     if buttons[pygame.K_RIGHT]:
-        dx += 4 # was 3
+        dx += speed # was 3
         # player_a += sensitivity
         # if player_a > 360:
         #     player_a = player_a - 360

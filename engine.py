@@ -16,7 +16,7 @@ zoom = 3000
 # Time
 last_tick = 0
 #_______________________________________________________________________________________
-
+fps = 1
 QUIT = False
 class Walls():
     def __init__(self):
@@ -100,7 +100,7 @@ def playerMovement():
     buttons = pygame.key.get_pressed()
     dx = 0
     dz = 0
-    speed = 10
+    speed = 800 / fps
     if buttons[pygame.K_UP]:
         dz += -speed
     if buttons[pygame.K_DOWN]:
@@ -110,7 +110,9 @@ def playerMovement():
     if buttons[pygame.K_RIGHT]:
         dx += speed
     return dx, dz
-
+def loadFps(fps2):
+    global fps
+    fps = fps2
 
 def updateMap(player_x, player_y, player_z, player_a, showPlayer):
     global plane_x, plane_y, plane_z, QUIT
