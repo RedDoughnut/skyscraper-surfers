@@ -158,6 +158,8 @@ def main():
             player_a = 0 
             player_l = 180
             screen = 0
+            dx, dz = 0, 0
+            engine.loadMap()
         window.fill((0, 0, 0))
         framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
         framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 100, 50)
