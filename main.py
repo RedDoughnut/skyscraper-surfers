@@ -122,7 +122,7 @@ def main():
 
         window.fill((0, 0, 0))
         framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-        framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 255, 255)
+        framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 100, 50)
         framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
         pygame.surfarray.blit_array(window, framebuffer)
         
