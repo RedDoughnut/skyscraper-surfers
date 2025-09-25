@@ -166,7 +166,7 @@ def main():
         
         score_text = small_font.render(f"{score}", True, (255,0,0))
         hiscore_text = small_font.render(f"HI: {highscore}", True, (255,0,0))
-        fps_text = small_font.render(f"FPS: {int(rendertime * 1000)}", True, (255,0,0))
+        fps_text = small_font.render(f"FPS: {int(1 / rendertime) if rendertime > 0 else 0}", True, (255,0,0))
         window.blit(score_text, (window.get_width()//2 - score_text.get_width()//2, 5))
         window.blit(hiscore_text, (window.get_width() - hiscore_text.get_width() - 5, 5))
         window.blit(fps_text, (5, 5))
