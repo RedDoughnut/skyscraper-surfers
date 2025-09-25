@@ -37,7 +37,7 @@ def main():
     pointer = pygame.image.load("assets/Pointer.png").convert_alpha()
     # Player
     score = 0
-    highscore = 0
+    highscore = read_highscore()
     player_x = 150
     player_y = 0
     player_z = -50
@@ -49,6 +49,7 @@ def main():
     dy = player_forward_speed
     dz = 0
 
+    time_per_frame = 0
     time_since_last = 0
     running = True
     while running:
@@ -154,6 +155,13 @@ def main():
         # print(f"{player_x:}, {player_y:}, {player_z:}")
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
         if engine.checkQuit():
+            if score > read_highscore():
+                highscore = score
+                try:
+                    with open("assets/highscore.txt", "w") as f:
+                        f.write(str(highscore))
+                except Exception as e:
+                    print(f"Error writing highscore: {e}")
             onTitleScreen = True
             player_x = 150
             player_y = 0
@@ -190,9 +198,10 @@ def main():
             mixer.music.load("assets/ACybersWorld.mp3")
             mixer.music.play(-1)
         # print(frametime * 1000)
+        pygame.time.delay(int(1000 / fps - rendertime))
         rendertime = time.time() - start_frametime
         # print(1000 / fps)
-        pygame.time.delay(int(1000 / fps - rendertime))
+        
         frametime = time.time() - start_frametime
 
 
@@ -263,6 +272,12 @@ def playerMovement(player_a, player_l, buttons):
         player_l += 3
 
     return dx, dy, dz, player_a, player_l
+def read_highscore():
+    try:
+        with open("assets/highscore.txt", "r") as f:
+            return int(f.read().strip())
+    except Exception:
+        return 0
 
 if __name__ == "__main__":
     main()
