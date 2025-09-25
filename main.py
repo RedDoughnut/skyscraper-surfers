@@ -17,7 +17,9 @@ def main():
     mixer.music.load("assets/ACybersWorld.mp3")
     mixer.music.set_volume(volume)
     mixer.music.play(-1)
-
+    boom = mixer.Sound("assets/explosion.mp3")
+    boom.set_volume(0.5)
+    
     pygame.display.set_caption("Skyscraper Surfers")
     width = engine.width
     height = engine.height
@@ -159,6 +161,7 @@ def main():
             player_z = -50
             player_a = 0 
             player_l = 180
+            boom.play() if sfx else None
             mixer.music.load("assets/ACybersWorld.mp3")
             mixer.music.play(-1)
             screen = 0
