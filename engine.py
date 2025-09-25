@@ -17,6 +17,7 @@ zoom = 3000
 last_tick = 0
 #_______________________________________________________________________________________
 
+QUIT = False
 class Walls():
     def __init__(self):
         self.x1 = 0
@@ -112,7 +113,7 @@ def playerMovement():
 
 
 def updateMap(player_x, player_y, player_z, player_a, showPlayer):
-    global plane_x, plane_y, plane_z
+    global plane_x, plane_y, plane_z, QUIT
     CS = math.cos(math.radians(player_a))
     SN = math.sin(math.radians(player_a))
     r = [[None, None] for i in range(map.GROUP_NUM)]
@@ -145,9 +146,14 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
             S[s].z1 += dz
     if showPlayer:
         if collisions(plane_x, plane_y, plane_z):
-            pygame.quit()
+            QUIT = True
             # make it return to title screen
-
+def checkQuit():
+    global QUIT
+    if QUIT:
+        QUIT = False
+        return True
+    return QUIT
 def collisions(x, y, z):
     for sector in S:
         if (sector.z1 < z < sector.z1+sector.z2) and collision2D(x, y, sector):
