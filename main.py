@@ -23,7 +23,7 @@ def main():
     pygame.display.set_caption("Skyscraper Surfers")
     width = engine.width
     height = engine.height
-    fps = 30
+    fps = 60
     font = pygame.font.Font('assets/8-bit-font.ttf', 30)
     small_font = pygame.font.Font('assets/8-bit-font.ttf', 18)
     window = pygame.display.set_mode((width, height))
@@ -70,7 +70,7 @@ def main():
                 player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
                 framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-                framebuffer[:, height // 2 - player_l + 180: height] = (50, 50, 50)
+                framebuffer[:, int(height // 2 - player_l + 180): height] = (50, 50, 50)
                 framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
                 pygame.surfarray.blit_array(window, framebuffer)
 
