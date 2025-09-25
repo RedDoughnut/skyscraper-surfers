@@ -18,8 +18,8 @@ def main():
     mixer.music.set_volume(volume)
     mixer.music.play(-1)
     boom = mixer.Sound("assets/explosion.mp3")
-    boom.set_volume(0.5)
-    
+    boom.set_volume(0.1)
+
     pygame.display.set_caption("Skyscraper Surfers")
     width = engine.width
     height = engine.height
@@ -60,7 +60,7 @@ def main():
         if onTitleScreen:
             window.fill((0,0,0))
             
-            if screen==0:
+            if True: #screen==0:
                 player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
                 framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
@@ -166,6 +166,16 @@ def main():
         framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 100, 50)
         framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
         pygame.surfarray.blit_array(window, framebuffer)
+
+        if engine.checkQuit():
+            onTitleScreen = True
+            score = 0
+            if sfx:
+                boom.play()
+            mixer.music.load("assets/ACybersWorld.mp3")
+            mixer.music.play(-1)
+            screen = 0
+            dx, dy, dz = 0, 0, 0
         
         if engine.checkQuit():
             onTitleScreen = True
