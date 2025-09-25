@@ -111,8 +111,7 @@ def playerMovement():
     return dx, dz
 
 def collision2D(x, y):
-    colliding = False
-    y_intersect_old = None
+    # y_intersect_old = None
     collision_counter = 0
     for sector in S:
         if sector.sector_type == 0:
@@ -127,11 +126,11 @@ def collision2D(x, y):
                 k = (y1 - y2) / (x1 - x2)
                 n = y1 - k * x1
                 y_intersect = k * x + n
-                if y_intersect_old != y_intersect:
-                    if y < y_intersect:
-                        if x1 <= x <= x2 or x2 <= x <= x1:
-                            collision_counter += 1
-                            y_intersect_old  = y_intersect
+                # if y_intersect_old != y_intersect:
+                if y < y_intersect:
+                    if x1 <= x <= x2 or x2 <= x <= x1:
+                        collision_counter += 1
+                        y_intersect_old  = y_intersect
 
             if collision_counter % 2 == 1:
                 return True
@@ -144,9 +143,6 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
     SN = math.sin(math.radians(player_a))
     r = [None for i in range(map.GROUP_NUM)]
     dx, dz = playerMovement()
-    plane_x = 0
-    plane_y = 0
-    plane_z = 0
     if showPlayer:
         plane_x += dx
         plane_y = player_y + 260 
@@ -172,8 +168,10 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
                 W[w].x1 += dx
                 W[w].x2 += dx
             S[s].z1 += dz
-    if collision2D(plane.x, plane.y):
-        print("collision detected")
+    if showPlayer:
+        if collision2D(plane_x, plane_y):
+            pygame.quit()
+            # make it return to title screen
             
 
 def clipBehindPlayer(x1, y1, z1, x2, y2, z2):
