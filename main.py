@@ -81,6 +81,14 @@ def main():
                     onTitleScreen = False
                     mixer.music.load("assets/CORE.mp3")
                     mixer.music.play(-1)
+                    player_x = 150
+                    player_y = 0
+                    score = 0
+                    player_z = -50
+                    player_a = 0 
+                    player_l = 180
+                    engine.loadMap()
+
                 elif selectedOption == 1:
                     screen = 2
                 elif selectedOption == 2:
@@ -154,6 +162,12 @@ def main():
         dx, dy, dz, player_a, player_l = cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity)
         # print(f"{player_x:}, {player_y:}, {player_z:}")
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
+        window.fill((0, 0, 0))
+        framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
+        framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 100, 50)
+        framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
+        pygame.surfarray.blit_array(window, framebuffer)
+
         if engine.checkQuit():
             if score > read_highscore():
                 highscore = score
@@ -163,24 +177,21 @@ def main():
                 except Exception as e:
                     print(f"Error writing highscore: {e}")
             onTitleScreen = True
-            player_x = 150
-            player_y = 0
             score = 0
-            player_z = -50
-            player_a = 0 
-            player_l = 180
             if sfx:
                 boom.play()
             mixer.music.load("assets/ACybersWorld.mp3")
             mixer.music.play(-1)
             screen = 0
-            dx, dz = 0, 0
-            engine.loadMap()
-        window.fill((0, 0, 0))
-        framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-        framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 100, 50)
-        framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
-        pygame.surfarray.blit_array(window, framebuffer)
+            dx, dy, dz = 0, 0, 0
+        
+        if engine.checkQuit():
+            onTitleScreen = True
+            boom.play() if sfx else None
+            mixer.music.load("assets/ACybersWorld.mp3")
+            mixer.music.play(-1)
+            screen = 0
+            dx, dy, dz = 0, 0, 0
         
         score_text = small_font.render(f"{score}", True, (255,0,0))
         hiscore_text = small_font.render(f"HI: {highscore}", True, (255,0,0))
@@ -213,15 +224,15 @@ def cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivit
     # Camera
     # Horizontal angle
     if buttons[pygame.K_LEFT]:
-        dx += -3
-        player_a -= sensitivity
-        if player_a < 0:
-            player_a = player_a + 360
+        dx += -4 # was 3
+        # player_a -= sensitivity
+        # if player_a < 0:
+        #     player_a = player_a + 360
     if buttons[pygame.K_RIGHT]:
-        dx += 3
-        player_a += sensitivity
-        if player_a > 360:
-            player_a = player_a - 360
+        dx += 4 # was 3
+        # player_a += sensitivity
+        # if player_a > 360:
+        #     player_a = player_a - 360
     # Look angle
     if buttons[pygame.K_DOWN]:
         player_l -= sensitivity
