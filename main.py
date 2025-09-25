@@ -215,15 +215,15 @@ def cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivit
     # Camera
     # Horizontal angle
     if buttons[pygame.K_LEFT]:
-        dx += -3
-        player_a -= sensitivity
-        if player_a < 0:
-            player_a = player_a + 360
+        dx += -4 # was 3
+        # player_a -= sensitivity
+        # if player_a < 0:
+        #     player_a = player_a + 360
     if buttons[pygame.K_RIGHT]:
-        dx += 3
-        player_a += sensitivity
-        if player_a > 360:
-            player_a = player_a - 360
+        dx += 4 # was 3
+        # player_a += sensitivity
+        # if player_a > 360:
+        #     player_a = player_a - 360
     # Look angle
     if buttons[pygame.K_DOWN]:
         player_l -= sensitivity
