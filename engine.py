@@ -1,7 +1,6 @@
 import math
 import map
 import pygame
-import sys
 from random import randint
 
 aspect_ratio = 16 / 9
@@ -128,7 +127,7 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
         if S[s].sector_type == 0:
             if r[S[s].groupid][0] is None:
                 r[S[s].groupid][0] = randint(-400, 400)
-                r[S[s].groupid][1] = randint(1000, 2000)
+                r[S[s].groupid][1] = randint(1000, 2500)
             for w in range(S[s].wall_start, S[s].wall_end):
                 if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
                     for s1 in range(map.SECTOR_NUM):
@@ -156,6 +155,7 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
         if collisions(plane_x, plane_y - 70, plane_z):
             QUIT = True
             # make it return to title screen
+        print(plane_x, plane_y, plane_z)
 def checkQuit():
     global QUIT
     if QUIT:
@@ -187,31 +187,6 @@ def collision2D(x, y, sector):
         if collision_counter % 2 == 1:
             return True
     return False
-
-# def collision2D(x, y, sector):
-#     # y_intersect_old = None
-#     collision_counter = 0
-#     if sector.sector_type == 0:
-#         for w in range(sector.wall_start, sector.wall_end):
-#             x1 = W[w].x1
-#             y1 = W[w].y1
-#             x2 = W[w].x2
-#             y2 = W[w].y2
-#             if x1 == x2:
-#                 continue
-
-#             k = (y1 - y2) / (x1 - x2)
-#             n = y1 - k * x1
-#             y_intersect = k * x + n
-#             # if y_intersect_old != y_intersect:
-#             if y < y_intersect:
-#                 if x1 <= x <= x2 or x2 <= x <= x1:
-#                     collision_counter += 1
-#                     y_intersect_old  = y_intersect
-
-#         if collision_counter % 2 == 1:
-#             return True
-#     return False
 
 
 def clipBehindPlayer(x1, y1, z1, x2, y2, z2):
