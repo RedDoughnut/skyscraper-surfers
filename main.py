@@ -10,7 +10,7 @@ def main():
     pygame.init()
     pygame.font.init()
     mixer.init()
-
+    start_frametime = 0
     volume = 0.2
     sfx = True
 
@@ -54,7 +54,6 @@ def main():
     time_since_last = 0
     running = True
     while running:
-        start_frametime = time.time()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -205,11 +204,11 @@ def main():
             mixer.music.load("assets/ACybersWorld.mp3")
             mixer.music.play(-1)
         # print(frametime * 1000)
-        pygame.time.delay(int(1000 / fps - rendertime))
         rendertime = time.time() - start_frametime
+        pygame.time.delay(int(1000 / fps - rendertime))
         # print(1000 / fps)
-        
         frametime = time.time() - start_frametime
+        start_frametime = time.time()
 
 
 def cameraMovement(player_a, player_l, buttons, player_forward_speed, speed, sensitivity):
