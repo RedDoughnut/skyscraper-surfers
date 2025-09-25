@@ -3,6 +3,7 @@ import pygame
 from pygame import mixer
 import math
 import time
+import sys
 import numpy
 
 
@@ -11,11 +12,12 @@ def main():
     pygame.font.init()
     mixer.init()
 
-    volume = 0.7
+    volume = 0.2
+    sfx = True
 
     mixer.music.load("assets/ACybersWorld.mp3")
     mixer.music.set_volume(volume)
-    mixer.music.play()
+    mixer.music.play(-1)
 
     pygame.display.set_caption("Skyscraper Surfers")
     width = engine.width
@@ -81,6 +83,7 @@ def main():
                     screen = 1
                 elif selectedOption == 3:
                     pygame.quit()
+                    sys.exit()
             if screen == 0:
                 hiscore_text = font.render(f"HI: {highscore}", True, (255,0,0))
                 settings_text = font.render("SETTINGS", True, (255,0,0))
@@ -105,6 +108,35 @@ def main():
                 window.blit(text2, (window.get_width()//2 - text2.get_width()//2, 150))
                 window.blit(text3, (window.get_width()//2 - text3.get_width()//2, 200))
                 window.blit(text4, (window.get_width()//2 - text4.get_width()//2, 250))
+            elif screen == 2:
+                if buttons[pygame.K_q]:
+                    screen = 0
+                mouse = pygame.mouse.get_pressed()
+                mousepos = pygame.mouse.get_pos()
+                if mouse[0] and mousepos[1]>=110 and mousepos[1]<=150 and mousepos[0]>=370 and mousepos[0]<830:
+                    volume = (mousepos[0]-400)/400
+                    if volume>1.0:
+                        volume = 1.0
+                    elif volume<0:
+                        volume = 0
+                    mixer.music.set_volume(volume)
+                elif mouse[0] and mousepos[0]>window.get_width()//2-55 and mousepos[0]<window.get_width()//2-25 and mousepos[1]>229 and mousepos[1]<259 and time.time() - time_since_last>0.2:
+                    sfx = not sfx
+                    time_since_last = time.time()
+                volumetext = font.render("VOLUME", True, (255,0,0))
+                volumetext2 = font.render(f"{round(volume*100)}", True, (255,0,0))
+                sfxtext = font.render("SFX", True, (255,0,0))
+                quittext = font.render("PRESS Q TO LEAVE", True, (255,0,0))
+                window.blit(volumetext, (window.get_width()//2 - volumetext.get_width()//2, 60))
+                window.blit(volumetext2, (window.get_width()//2 - volumetext2.get_width()//2, 160))
+                window.blit(sfxtext, (window.get_width()//2 - 15, 230))
+                window.blit(quittext, (window.get_width()//2 - quittext.get_width()//2, 560))
+                pygame.draw.rect(window, (255,0,0), (400,120,400,20), border_radius=5)
+                pygame.draw.rect(window, (255,0,0), (window.get_width()//2-55, 229, 30, 30), width = 3)
+                if sfx:
+                    sfxTick = small_font.render("X", True, (255,0,0))
+                    window.blit(sfxTick, (window.get_width()//2-49,235))
+                pygame.draw.circle(window, (255,255,255), (400+400*volume,130), 15)
             pygame.display.flip()
             rendertime = time.time() - start_frametime
             start_frametime = time.time()
