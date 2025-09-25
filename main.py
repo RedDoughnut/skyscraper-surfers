@@ -5,7 +5,6 @@ import math
 import time
 import sys
 import numpy
-4
 
 def main():
     pygame.init()
@@ -50,8 +49,8 @@ def main():
 
     time_since_last = 0
     running = True
-    start_frametime = time.time()
     while running:
+        start_frametime = time.time()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -150,8 +149,15 @@ def main():
         dx, dy, dz, player_a, player_l = cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity)
         # print(f"{player_x:}, {player_y:}, {player_z:}")
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
-
-
+        if engine.checkQuit():
+            onTitleScreen = True
+            player_x = 150
+            player_y = 0
+            score = 0
+            player_z = -50
+            player_a = 0 
+            player_l = 180
+            screen = 0
         window.fill((0, 0, 0))
         framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
         framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 100, 50)
@@ -159,9 +165,11 @@ def main():
         pygame.surfarray.blit_array(window, framebuffer)
         
         score_text = small_font.render(f"{score}", True, (255,0,0))
-        hiscore_text = small_font.render(f"HI: {int(rendertime * 1000)}", True, (255,0,0))
+        hiscore_text = small_font.render(f"HI: {highscore}", True, (255,0,0))
+        fps_text = small_font.render(f"FPS: {int(rendertime * 1000)}", True, (255,0,0))
         window.blit(score_text, (window.get_width()//2 - score_text.get_width()//2, 5))
         window.blit(hiscore_text, (window.get_width() - hiscore_text.get_width() - 5, 5))
+        window.blit(fps_text, (5, 5))
 
 
         pygame.display.flip()
@@ -174,7 +182,7 @@ def main():
         # print(1000 / fps)
         pygame.time.delay(int(1000 / fps - rendertime))
         frametime = time.time() - start_frametime
-        start_frametime = time.time()
+
 
 def cameraMovement(player_a, player_l, buttons, player_forward_speed, sensitivity):
     # Camera movement
