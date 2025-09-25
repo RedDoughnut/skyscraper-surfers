@@ -70,7 +70,7 @@ def main():
                 player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
                 framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-                framebuffer[:, int(height // 2 - player_l + 180): height] = (50, 50, 50)
+                framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 100, 50)
                 framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
                 pygame.surfarray.blit_array(window, framebuffer)
 
@@ -217,10 +217,8 @@ def main():
             score = 0
             mixer.music.load("assets/ACybersWorld.mp3")
             mixer.music.play(-1)
-        # print(frametime * 1000)
         rendertime = time.time() - start_frametime
         
-        # print(1000 / fps)
         pygame.time.delay(int(1000 / fps - rendertime))
         frametime = time.time() - start_frametime
         start_frametime = time.time()
@@ -233,21 +231,25 @@ def cameraMovement(player_a, player_l, buttons, player_forward_speed, speed, sen
     dz = 0
     # Camera
     # Horizontal angle
-    if buttons[pygame.K_LEFT]:
-        dx += -speed  # was 3
-        # player_a -= sensitivity
-        # if player_a < 0:
-        #     player_a = player_a + 360
-    if buttons[pygame.K_RIGHT]:
-        dx += speed # was 3
-        # player_a += sensitivity
-        # if player_a > 360:
-        #     player_a = player_a - 360
+    if engine.plane_x > -600:
+        if buttons[pygame.K_LEFT]:
+            dx += -speed  # was 3
+            # player_a -= sensitivity
+            # if player_a < 0:
+            #     player_a = player_a + 360
+    if engine.plane_x < 600:
+        if buttons[pygame.K_RIGHT]:
+            dx += speed # was 3
+            # player_a += sensitivity
+            # if player_a > 360:
+            #     player_a = player_a - 360
     # Look angle
-    if buttons[pygame.K_DOWN]:
-        player_l -= sensitivity
-    if buttons[pygame.K_UP]:
-        player_l += sensitivity
+    if engine.plane_z > 50:
+        if buttons[pygame.K_UP]:
+            player_l += sensitivity
+    if engine.plane_z < 200:
+        if buttons[pygame.K_DOWN]:
+            player_l -= sensitivity
 
     return dx, dy, dz, player_a, player_l
 

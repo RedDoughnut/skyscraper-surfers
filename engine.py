@@ -100,14 +100,19 @@ def playerMovement():
     dx = 0
     dz = 0
     speed = 800 / fps
-    if buttons[pygame.K_UP]:
-        dz += -speed
-    if buttons[pygame.K_DOWN]:
-        dz += speed
-    if buttons[pygame.K_LEFT]:
-        dx += -speed
-    if buttons[pygame.K_RIGHT]:
-        dx += speed
+    
+    if plane_z > 50:
+        if buttons[pygame.K_UP]:
+            dz += -speed
+    if plane_z < 200:
+        if buttons[pygame.K_DOWN]:
+            dz += speed
+    if plane_x < 600:
+        if buttons[pygame.K_RIGHT]:
+            dx += speed
+    if plane_x > -600:
+        if buttons[pygame.K_LEFT]:
+            dx += -speed
     return dx, dz
 def loadFps(fps2):
     global fps
@@ -126,7 +131,7 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
     for s in range(map.SECTOR_NUM):
         if S[s].sector_type == 0:
             if r[S[s].groupid][0] is None:
-                r[S[s].groupid][0] = randint(-400, 400)
+                r[S[s].groupid][0] = randint(-700, 700)
                 r[S[s].groupid][1] = randint(1000, 2500)
             for w in range(S[s].wall_start, S[s].wall_end):
                 if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
@@ -155,7 +160,6 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
         if collisions(plane_x, plane_y - 70, plane_z):
             QUIT = True
             # make it return to title screen
-        print(plane_x, plane_y, plane_z)
 def checkQuit():
     global QUIT
     if QUIT:
