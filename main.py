@@ -132,13 +132,15 @@ def main():
                         time_since_last_click = time.time()
                     screen = 0
                 text1 = font.render("YOU ARE DRIVING A SPACESHIP, THE GOAL", True, (255,0,0))
-                text2 = font.render("IS TO AVOID ALL THE SKYSCRAPERS", True, (255,0,0))
-                text3 = font.render("USE ARROW KEYS FOR CONTROLS", True, (255,0,0))
-                text4 = font.render("PRESS Q TO LEAVE", True, (255,0,0))
-                window.blit(text1, (window.get_width()//2 - text1.get_width()//2, 100))
-                window.blit(text2, (window.get_width()//2 - text2.get_width()//2, 150))
-                window.blit(text3, (window.get_width()//2 - text3.get_width()//2, 200))
-                window.blit(text4, (window.get_width()//2 - text4.get_width()//2, 250))
+                text2 = font.render("IS TO AVOID ALL THE SKYSCRAPERS.", True, (255,0,0))
+                text3 = font.render("THE GAME SPEEDS UP AS YOU GO", True, (255,0,0))
+                text4 = font.render("USE ARROW KEYS FOR CONTROLS", True, (255,0,0))
+                text5 = font.render("PRESS Q TO LEAVE", True, (255,0,0))
+                window.blit(text1, (window.get_width()//2 - text1.get_width()//2, 70))
+                window.blit(text2, (window.get_width()//2 - text2.get_width()//2, 120))
+                window.blit(text3, (window.get_width()//2 - text3.get_width()//2, 170))
+                window.blit(text4, (window.get_width()//2 - text4.get_width()//2, 220))
+                window.blit(text5, (window.get_width()//2 - text5.get_width()//2, 270))
             elif screen == 2:
                 if buttons[pygame.K_q]:
                     if sfx and time.time() - time_since_last_click>0.2:
