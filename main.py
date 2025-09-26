@@ -116,15 +116,20 @@ def main():
                 start_text = font.render("START", True, (255,0,0))
                 help_text = font.render("HELP", True, (255,0,0))
                 quit_text = font.render("QUIT", True, (255,0,0))
+                controls_text = small_font.render("USE ARROW KEYS AND ENTER TO SELECT", True, (255,0,0))
                 window.blit(hiscore_text, (window.get_width()//2 - hiscore_text.get_width()//2, 150))
                 window.blit(pointer, (450, 207+50*selectedOption))
                 window.blit(start_text, (window.get_width()//2 - start_text.get_width()//2, 200))
                 window.blit(settings_text, (window.get_width()//2 - settings_text.get_width()//2, 250))
                 window.blit(help_text, (window.get_width()//2 - help_text.get_width()//2, 300))
                 window.blit(quit_text, (window.get_width()//2 - help_text.get_width()//2, 350))
+                window.blit(controls_text, (window.get_width()//2 - controls_text.get_width()//2, 600))
                 window.blit(title_image, ((window.get_width() - title_image.get_width()) // 2, 5))
             elif screen == 1:
                 if buttons[pygame.K_q]:
+                    if sfx and time.time() - time_since_last_click>0.2:
+                        click.play()
+                        time_since_last_click = time.time()
                     screen = 0
                 text1 = font.render("YOU ARE DRIVING A SPACESHIP, THE GOAL", True, (255,0,0))
                 text2 = font.render("IS TO AVOID ALL THE SKYSCRAPERS", True, (255,0,0))
@@ -136,6 +141,9 @@ def main():
                 window.blit(text4, (window.get_width()//2 - text4.get_width()//2, 250))
             elif screen == 2:
                 if buttons[pygame.K_q]:
+                    if sfx and time.time() - time_since_last_click>0.2:
+                        click.play()
+                        time_since_last_click = time.time()
                     screen = 0
                 mouse = pygame.mouse.get_pressed()
                 mousepos = pygame.mouse.get_pos()
@@ -148,7 +156,26 @@ def main():
                     mixer.music.set_volume(volume)
                 elif mouse[0] and mousepos[0]>window.get_width()//2-55 and mousepos[0]<window.get_width()//2-25 and mousepos[1]>229 and mousepos[1]<259 and time.time() - time_since_last>0.2:
                     sfx = not sfx
+                    if sfx and time.time() - time_since_last_click>0.2:
+                        click.play()
+                        time_since_last_click = time.time()
                     time_since_last = time.time()
+                elif mouse[0] and mousepos[1]>343 and mousepos[1]<383:
+                    if mousepos[0]>245 and mousepos[0]<245+170:
+                        fps = 30
+                        if sfx and time.time() - time_since_last_click>0.2:
+                            click.play()
+                            time_since_last_click = time.time()
+                    elif mousepos[0]>515 and mousepos[0]<515+170:
+                        fps = 45
+                        if sfx and time.time() - time_since_last_click>0.2:
+                            click.play()
+                            time_since_last_click = time.time()
+                    elif mousepos[0]>780 and mousepos[0]<780+170:
+                        fps = 60
+                        if sfx and time.time() - time_since_last_click>0.2:
+                            click.play()
+                            time_since_last_click = time.time()
                 if buttons[pygame.K_LEFT] and fps>30 and time.time() - time_since_last_click>0.2:
                     if sfx and time.time() - time_since_last_click>0.2:
                         click.play()
@@ -159,6 +186,7 @@ def main():
                         click.play()
                     time_since_last_click = time.time()
                     fps += 15
+                
                 volumetext = font.render("MUSIC VOLUME", True, (255,0,0))
                 volumetext2 = font.render(f"{round(volume*100)}", True, (255,0,0))
                 sfxtext = font.render("SFX", True, (255,0,0))
