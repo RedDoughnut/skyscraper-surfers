@@ -149,21 +149,21 @@ def main():
                 elif mouse[0] and mousepos[0]>window.get_width()//2-55 and mousepos[0]<window.get_width()//2-25 and mousepos[1]>229 and mousepos[1]<259 and time.time() - time_since_last>0.2:
                     sfx = not sfx
                     time_since_last = time.time()
-                if buttons[pygame.K_LEFT] and fps==60:
+                if buttons[pygame.K_LEFT] and fps>30 and time.time() - time_since_last_click>0.2:
                     if sfx and time.time() - time_since_last_click>0.2:
                         click.play()
-                        time_since_last_click = time.time()
-                    fps = 30
-                elif buttons[pygame.K_RIGHT] and fps==30:
+                    time_since_last_click = time.time()
+                    fps -= 15
+                elif buttons[pygame.K_RIGHT] and fps<60 and time.time() - time_since_last_click>0.2:
                     if sfx and time.time() - time_since_last_click>0.2:
                         click.play()
-                        time_since_last_click = time.time()
-                    fps = 60
+                    time_since_last_click = time.time()
+                    fps += 15
                 volumetext = font.render("MUSIC VOLUME", True, (255,0,0))
                 volumetext2 = font.render(f"{round(volume*100)}", True, (255,0,0))
                 sfxtext = font.render("SFX", True, (255,0,0))
                 fpstext1 = font.render("FPS", True, (255,0,0))
-                fpstext2 = font.render("30FPS     60FPS", True, (255,0,0))
+                fpstext2 = font.render("30FPS    45FPS    60FPS", True, (255,0,0))
                 quittext = font.render("PRESS Q TO LEAVE", True, (255,0,0))
                 window.blit(volumetext, (window.get_width()//2 - volumetext.get_width()//2, 60))
                 window.blit(volumetext2, (window.get_width()//2 - volumetext2.get_width()//2, 160))
@@ -173,7 +173,12 @@ def main():
                 window.blit(quittext, (window.get_width()//2 - quittext.get_width()//2, 560))
                 pygame.draw.rect(window, (255,0,0), (400,120,400,20), border_radius=5)
                 pygame.draw.rect(window, (255,0,0), (window.get_width()//2-55, 229, 30, 30), width = 3)
-                pygame.draw.rect(window, (255,0,0), (360 if fps==30 else 662, 343, 170, 40), width = 3)
+                left = 245
+                if fps==45:
+                    left = 515
+                elif fps==60:
+                    left = 780
+                pygame.draw.rect(window, (255,0,0), (left, 343, 170, 40), width = 3)
                 if sfx:
                     sfxTick = small_font.render("X", True, (255,0,0))
                     window.blit(sfxTick, (window.get_width()//2-49,235))
@@ -241,6 +246,7 @@ def main():
         pygame.time.delay(int(1000 / fps - rendertime))
         frametime = time.time() - start_frametime
         start_frametime = time.time()
+        #print(engine.plane_y)
 
 
 def cameraMovement(player_a, player_l, buttons, player_forward_speed, speed, sensitivity):
