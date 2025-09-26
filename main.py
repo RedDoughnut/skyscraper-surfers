@@ -18,7 +18,7 @@ def main():
     mixer.music.set_volume(volume)
     mixer.music.play(-1)
     boom = mixer.Sound("assets/explosion.mp3")
-    click = mixer.Sound("assets/click.wav")
+    click = mixer.Sound("assets/click.mp3")
     boom.set_volume(0.1)
 
     pygame.display.set_caption("Skyscraper Surfers")
