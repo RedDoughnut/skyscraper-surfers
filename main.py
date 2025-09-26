@@ -39,6 +39,8 @@ def main():
     ALL_KEYS_OFF = tuple([0] * len(pygame.key.get_pressed()))
     selectedOption = 0
     title_image = pygame.image.load("assets/title.png").convert_alpha()
+    backdrop = pygame.image.load("assets/backdrop2.png").convert_alpha()
+    backdrop = pygame.transform.scale(backdrop, (backdrop.get_width() * height / backdrop.get_height(), height))
     pointer = pygame.image.load("assets/Pointer.png").convert_alpha()
     # Player
     score = 0
@@ -70,7 +72,7 @@ def main():
             if True: #screen==0:
                 player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
-                framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
+                framebuffer = pygame.surfarray.array3d(window)
                 framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 100, 50)
                 framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
                 pygame.surfarray.blit_array(window, framebuffer)
@@ -186,8 +188,11 @@ def main():
         # print(f"{player_x:}, {player_y:}, {player_z:}")
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
         window.fill((0, 0, 0))
-        framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-        framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 100, 50)
+        # framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
+        window.blit(backdrop, (-750, int(player_l*6) - 180*6 - backdrop.get_height() / 2))
+
+        framebuffer = pygame.surfarray.array3d(window)
+        framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (0, 217, 38)
         framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
         pygame.surfarray.blit_array(window, framebuffer)
 
