@@ -218,7 +218,7 @@ def main():
             pygame.time.delay(int(1000 / fps - rendertime))
             continue
         player_forward_speed += acceleration
-        score += 1 * 60 // fps
+        score += 10 * 60 // fps
         if score>highscore:
             highscore = score
         # dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l, buttons)

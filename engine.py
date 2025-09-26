@@ -158,6 +158,26 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
             for w in range(S[s].wall_start, S[s].wall_end):
                 W[w].y1 = player_y + W[w].wy1
                 W[w].y2 = player_y + W[w].wy2
+        if(S[s].sector_type == 4):
+            for w in range(S[s].wall_start, S[s].wall_end):
+                W[w].y1 -= 50
+                W[w].y2 -= 50
+            if r[S[s].groupid][0] is None:
+                r[S[s].groupid][0] = randint(-700, 700)
+                if plane_y < 50000:
+                    r[S[s].groupid][1] = randint(1000, 2500)
+                else:
+                    r[S[s].groupid][1] = randint(2000, 4000)
+            for w in range(S[s].wall_start, S[s].wall_end):
+                if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
+                    for s1 in range(map.SECTOR_NUM):
+                        if S[s1].groupid == S[s].groupid:
+                            for walls in range(S[s1].wall_start, S[s1].wall_end):
+                                W[walls].y1 += r[S[s1].groupid][1]
+                                W[walls].y2 += r[S[s1].groupid][1]
+                                W[walls].x1 = W[walls].wx1 + r[S[s1].groupid][0]
+                                W[walls].x2 = W[walls].wx2 + r[S[s1].groupid][0]
+            
     if showPlayer:
         if collisions(plane_x, plane_y, plane_z):
             QUIT = True
@@ -179,7 +199,7 @@ def collisions(x, y, z):
 
 def collision2D(x, y, sector):
     collision_counter = 0
-    if sector.sector_type == 0:
+    if sector.sector_type == 0 or sector.sector_type == 4:
         for w in range(sector.wall_start, sector.wall_end):
             x1 = W[w].x1
             y1 = W[w].y1
