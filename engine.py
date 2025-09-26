@@ -107,10 +107,10 @@ def playerMovement():
     if plane_z < 200:
         if buttons[pygame.K_DOWN]:
             dz += speed
-    if plane_x < 600:
+    if plane_x < 750:
         if buttons[pygame.K_RIGHT]:
             dx += speed
-    if plane_x > -600:
+    if plane_x > -450:
         if buttons[pygame.K_LEFT]:
             dx += -speed
     return dx, dz
@@ -164,6 +164,7 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
         if collisions(plane_x, plane_y - 70, plane_z):
             QUIT = True
             # make it return to title screen
+
 def checkQuit():
     global QUIT
     if QUIT:
