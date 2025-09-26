@@ -4,7 +4,6 @@ from pygame import mixer
 import math
 import time
 import sys
-import numpy
 
 def main():
     pygame.init()
