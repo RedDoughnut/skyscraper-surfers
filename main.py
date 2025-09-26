@@ -51,8 +51,9 @@ def main():
     player_a = 0    # Horizontal angle
     player_l = 180    # Vertical angle
     sensitivity = 30 / fps
-    player_forward_speed = 1280 / fps
+    acceleration = 1 / fps
     left_right_speed = 480 / fps
+    player_forward_speed = 1280 / fps
     dx = 0
     dy = player_forward_speed
     dz = 0
@@ -72,10 +73,12 @@ def main():
             if True: #screen==0:
                 player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
-                framebuffer = pygame.surfarray.array3d(window)
-                framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (100, 100, 50)
-                framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
-                pygame.surfarray.blit_array(window, framebuffer)
+            window.blit(backdrop, (-750 + player_x / 100, int(player_l*6) - 180*6 - backdrop.get_height() / 2))
+
+            framebuffer = pygame.surfarray.array3d(window)
+            framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (0, 217, 38)
+            framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
+            pygame.surfarray.blit_array(window, framebuffer)
 
             buttons = pygame.key.get_pressed()
             if buttons[pygame.K_DOWN] and selectedOption<3 and screen == 0 and time.time() - time_since_last>0.2:
@@ -98,6 +101,7 @@ def main():
                     player_z = -50
                     player_a = 0 
                     player_l = 180
+                    player_forward_speed = 1280 / fps
                     engine.loadMap()
                 elif selectedOption == 1:
                     screen = 2
@@ -179,7 +183,7 @@ def main():
             start_frametime = time.time()
             pygame.time.delay(int(1000 / fps - rendertime))
             continue
-        
+        player_forward_speed += acceleration
         score += 1 * 60 // fps
         if score>highscore:
             highscore = score
@@ -193,6 +197,7 @@ def main():
 
         framebuffer = pygame.surfarray.array3d(window)
         framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (0, 217, 38)
+
         framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, True, framebuffer)
         pygame.surfarray.blit_array(window, framebuffer)
 
@@ -236,6 +241,7 @@ def main():
         pygame.time.delay(int(1000 / fps - rendertime))
         frametime = time.time() - start_frametime
         start_frametime = time.time()
+        print(engine.plane_y)
 
 
 def cameraMovement(player_a, player_l, buttons, player_forward_speed, speed, sensitivity):

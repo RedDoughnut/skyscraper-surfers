@@ -124,6 +124,7 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
     SN = math.sin(math.radians(player_a))
     r = [[None, None] for i in range(map.GROUP_NUM)]
     dx, dz = playerMovement()
+    plane_y = -1000
     if showPlayer:
         plane_x += dx
         plane_y = player_y + 300 
@@ -132,7 +133,10 @@ def updateMap(player_x, player_y, player_z, player_a, showPlayer):
         if S[s].sector_type == 0:
             if r[S[s].groupid][0] is None:
                 r[S[s].groupid][0] = randint(-700, 700)
-                r[S[s].groupid][1] = randint(1000, 2500)
+                if plane_y < 50000:
+                    r[S[s].groupid][1] = randint(1000, 2500)
+                else:
+                    r[S[s].groupid][1] = randint(2000, 4000)
             for w in range(S[s].wall_start, S[s].wall_end):
                 if W[w].y1 < player_y - 100 or W[w].y2 < player_y - 100:
                     for s1 in range(map.SECTOR_NUM):
