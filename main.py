@@ -284,13 +284,13 @@ def cameraMovement(player_a, player_l, buttons, player_forward_speed, speed, sen
     dz = 0
     # Camera
     # Horizontal angle
-    if engine.plane_x > -600:
+    if engine.plane_x > -450:
         if buttons[pygame.K_LEFT]:
             dx += -speed  # was 3
             # player_a -= sensitivity
             # if player_a < 0:
             #     player_a = player_a + 360
-    if engine.plane_x < 600:
+    if engine.plane_x < 750:
         if buttons[pygame.K_RIGHT]:
             dx += speed # was 3
             # player_a += sensitivity
