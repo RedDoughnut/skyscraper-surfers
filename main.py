@@ -189,7 +189,7 @@ def main():
         player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
         window.fill((0, 0, 0))
         # framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
-        window.blit(backdrop, (-750, int(player_l*6) - 180*6 - backdrop.get_height() / 2))
+        window.blit(backdrop, (-750 + player_x / 100, int(player_l*6) - 180*6 - backdrop.get_height() / 2))
 
         framebuffer = pygame.surfarray.array3d(window)
         framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (0, 217, 38)
