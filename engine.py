@@ -16,7 +16,7 @@ zoom = 3000
 
 # Time
 last_tick = 0
-fps = 1
+fps = 60
 QUIT = False
 
 # Global arrays for Numba compatibility
@@ -210,11 +210,13 @@ def player_movement_numba(plane_x_val, plane_z_val, fps_val):
     return dx, dz
 
 def playerMovement():
-    """Non-numba wrapper for pygame input"""
+    global fps
     buttons = pygame.key.get_pressed()
     dx = 0
     dz = 0
-    speed = 800 / fps
+    # Make speed proportional to fps (frame time)
+    frame_time = 1.0 / fps if fps > 0 else 0.016
+    speed = 800 * frame_time
     
     global plane_z, plane_x
     if plane_z > 50:

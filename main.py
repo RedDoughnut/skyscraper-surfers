@@ -28,7 +28,6 @@ def main():
     font = pygame.font.Font('assets/8-bit-font.ttf', 30)
     small_font = pygame.font.Font('assets/8-bit-font.ttf', 18)
     window = pygame.display.set_mode((width, height))
-
     #Icon
     icon = pygame.image.load("assets/icon.png")
     pygame.display.set_icon(icon)
@@ -40,7 +39,7 @@ def main():
     selectedOption = 0
     title_image = pygame.image.load("assets/title.png").convert_alpha()
     backdrop = pygame.image.load("assets/backdrop2.png").convert_alpha()
-    backdrop = pygame.transform.scale(backdrop, (backdrop.get_width() * height / backdrop.get_height(), height))
+    backdrop = pygame.transform.scale(backdrop, (int(backdrop.get_width() * height / backdrop.get_height()), height))
     pointer = pygame.image.load("assets/Pointer.png").convert_alpha()
     # Player
     score = 0
@@ -61,7 +60,12 @@ def main():
     time_since_last = 0
     time_since_last_click = 0
     running = True
+    rendertime = 0
+    times = 0
+    clock = pygame.time.Clock()
     while running:
+        if times<=1:
+            times+=1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -69,17 +73,24 @@ def main():
         buttons = pygame.key.get_pressed()
         if onTitleScreen:
             window.fill((0,0,0))
-            
+            if times==1:
+                window.blit(title_image, ((window.get_width() - title_image.get_width()) // 2, 5))
+                loading_text = font.render("LOADING...", True, (255,0,0))
+                window.blit(loading_text, (window.get_width()//2 - loading_text.get_width()//2, 500))
+                pygame.display.flip()
+
             if True: #screen==0:
                 player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
-            window.blit(backdrop, (-750 + player_x / 100, int(player_l*6) - 180*6 - backdrop.get_height() / 2))
+            window.blit(backdrop, (int(-750 + player_x / 100), int(player_l*6 - 180*6 - backdrop.get_height() / 2)))
+
 
             framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
             framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (0, 217, 38)
             framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
             pygame.surfarray.blit_array(window, framebuffer)
-
+            if times==1:
+                window.fill((0,0,0))
             buttons = pygame.key.get_pressed()
             if buttons[pygame.K_DOWN] and selectedOption<3 and screen == 0 and time.time() - time_since_last>0.2:
                 selectedOption+=1
@@ -142,6 +153,7 @@ def main():
                 window.blit(text4, (window.get_width()//2 - text4.get_width()//2, 220))
                 window.blit(text5, (window.get_width()//2 - text5.get_width()//2, 270))
             elif screen == 2:
+                old_fps = fps
                 if buttons[pygame.K_q]:
                     if sfx and time.time() - time_since_last_click>0.2:
                         click.play()
@@ -163,18 +175,23 @@ def main():
                         time_since_last_click = time.time()
                     time_since_last = time.time()
                 elif mouse[0] and mousepos[1]>343 and mousepos[1]<383:
-                    if mousepos[0]>245 and mousepos[0]<245+170:
+                    if mousepos[0]>90 and mousepos[0]<90+180:
                         fps = 30
                         if sfx and time.time() - time_since_last_click>0.2:
                             click.play()
                             time_since_last_click = time.time()
-                    elif mousepos[0]>515 and mousepos[0]<515+170:
-                        fps = 45
+                    elif mousepos[0]>357 and mousepos[0]<357+180:
+                        fps = 60
                         if sfx and time.time() - time_since_last_click>0.2:
                             click.play()
                             time_since_last_click = time.time()
-                    elif mousepos[0]>780 and mousepos[0]<780+170:
-                        fps = 60
+                    elif mousepos[0]>627 and mousepos[0]<627+180:
+                        fps = 90
+                        if sfx and time.time() - time_since_last_click>0.2:
+                            click.play()
+                            time_since_last_click = time.time()
+                    elif mousepos[0]>917 and mousepos[0]<917+180:
+                        fps = 120
                         if sfx and time.time() - time_since_last_click>0.2:
                             click.play()
                             time_since_last_click = time.time()
@@ -182,18 +199,18 @@ def main():
                     if sfx and time.time() - time_since_last_click>0.2:
                         click.play()
                     time_since_last_click = time.time()
-                    fps -= 15
-                elif buttons[pygame.K_RIGHT] and fps<60 and time.time() - time_since_last_click>0.2:
+                    fps -= 30
+                elif buttons[pygame.K_RIGHT] and fps<120 and time.time() - time_since_last_click>0.2:
                     if sfx and time.time() - time_since_last_click>0.2:
                         click.play()
                     time_since_last_click = time.time()
-                    fps += 15
+                    fps += 30
                 
                 volumetext = font.render("MUSIC VOLUME", True, (255,0,0))
                 volumetext2 = font.render(f"{round(volume*100)}", True, (255,0,0))
                 sfxtext = font.render("SFX", True, (255,0,0))
                 fpstext1 = font.render("FPS", True, (255,0,0))
-                fpstext2 = font.render("30FPS    45FPS    60FPS", True, (255,0,0))
+                fpstext2 = font.render("30FPS    60FPS    90FPS    120FPS", True, (255,0,0))
                 quittext = font.render("PRESS Q TO LEAVE", True, (255,0,0))
                 window.blit(volumetext, (window.get_width()//2 - volumetext.get_width()//2, 60))
                 window.blit(volumetext2, (window.get_width()//2 - volumetext2.get_width()//2, 160))
@@ -203,25 +220,30 @@ def main():
                 window.blit(quittext, (window.get_width()//2 - quittext.get_width()//2, 560))
                 pygame.draw.rect(window, (255,0,0), (400,120,400,20), border_radius=5)
                 pygame.draw.rect(window, (255,0,0), (window.get_width()//2-55, 229, 30, 30), width = 3)
-                left = 245
-                if fps==45:
-                    left = 515
-                elif fps==60:
-                    left = 780
-                pygame.draw.rect(window, (255,0,0), (left, 343, 170, 40), width = 3)
+                left = 90
+                if fps==60:
+                    left = 357
+                elif fps==90:
+                    left = 627
+                elif fps==120:
+                    left = 917
+                pygame.draw.rect(window, (255,0,0), (left, 343, 180, 40), width = 3)
                 if sfx:
                     sfxTick = small_font.render("X", True, (255,0,0))
                     window.blit(sfxTick, (window.get_width()//2-49,235))
                 pygame.draw.circle(window, (255,255,255), (400+400*volume,130), 15)
+                if old_fps != fps:
+                    sensitivity = 30 / fps
+                    acceleration = 1 / fps
+                    left_right_speed = 480 / fps
+                    player_forward_speed = 1280 / fps
             pygame.display.flip()
-            rendertime = time.time() - start_frametime
-            start_frametime = time.time()
-            pygame.time.delay(int(1000 / fps - rendertime))
+            clock.tick(fps)
             continue
         player_forward_speed += acceleration
-        score += 10 * 60 // fps
+        score += 10 * 60 / fps
         if score>highscore:
-            highscore = score
+            highscore = round(score)
         # dx, dy, dz, player_a, player_l = playerMovement(player_a, player_l, buttons)
         dx, dy, dz, player_a, player_l = cameraMovement(player_a, player_l, buttons, player_forward_speed, left_right_speed, sensitivity)
         # print(f"{player_x:}, {player_y:}, {player_z:}")
@@ -240,7 +262,7 @@ def main():
 
         if engine.checkQuit():
             if score > read_highscore():
-                highscore = score
+                highscore = round(score)
                 try:
                     with open("assets/highscore.txt", "w") as f:
                         f.write(str(highscore))
@@ -256,7 +278,7 @@ def main():
             dx, dy, dz = 0, 0, 0
     
         
-        score_text = small_font.render(f"{score}", True, (255,0,0))
+        score_text = small_font.render(f"{round(score)}", True, (255,0,0))
         hiscore_text = small_font.render(f"HI: {highscore}", True, (255,0,0))
         fps_text = small_font.render(f"FPS: {int(1 / rendertime) if rendertime > 0 else 0}", True, (255,0,0))
         window.blit(score_text, (window.get_width()//2 - score_text.get_width()//2, 5))
@@ -272,9 +294,7 @@ def main():
             mixer.music.load("assets/ACybersWorld.mp3")
             mixer.music.play(-1)
         rendertime = time.time() - start_frametime
-        
-        pygame.time.delay(int(1000 / fps - rendertime))
-        frametime = time.time() - start_frametime
+        clock.tick(fps)
         start_frametime = time.time()
         #print(engine.plane_y)
 
