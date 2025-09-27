@@ -3,7 +3,7 @@ import numpy as np
 from numba import njit, types
 from numba.typed import Dict, List
 import pygame
-from random import randint
+from random import randint, sample
 
 aspect_ratio = 16 / 9
 width = 1200
@@ -13,13 +13,13 @@ height = int(width / aspect_ratio)
 focal_lenght = 400
 focal_lenght_old = focal_lenght
 zoom = 3000
+speed = 0
 
 # Time
 last_tick = 0
 fps = 60
 QUIT = False
 
-# Global arrays for Numba compatibility
 W_data = np.zeros((256, 15), dtype=np.float64)  # x1, y1, x2, y2, color_r, color_g, color_b, wall_texture, u, v, shade, wy1, wy2, wx1, wx2
 S_data = np.zeros((128, 16), dtype=np.float64)  # wall_start, wall_end, d, color1_r, color1_g, color1_b, color2_r, color2_g, color2_b, z1, z2, surface_texture, surface_scale, sector_type, groupid, surface
 S_surf = np.zeros((128, width), dtype=np.float64)
@@ -46,55 +46,41 @@ def warmup_numba_functions():
         
     print("Warming up Numba functions...")
     
-    # Create test arrays with real game dimensions
-    test_W_data = np.copy(W_data)  # Use actual wall data
-    test_S_data = np.copy(S_data)  # Use actual sector data
+    test_W_data = np.copy(W_data)
+    test_S_data = np.copy(S_data)
     test_S_surf = np.zeros((128, width), dtype=np.float64)
     test_framebuffer = np.zeros((width, height, 3), dtype=np.uint8)
     
     try:
-        print("  Warming up basic functions...")
         import map
-        
-        # Basic function warmup
+
         collisions_numba(0, 0, 100, test_S_data, test_W_data, map.SECTOR_NUM)
         clip_behind_player_numba(1, 1, 1, 2, 2, 2)
         sector_distance_numba(0, 0, 0, test_S_data, test_W_data)
         
-        print("  Warming up movement across full game range...")
-        # Test movement across the entire playable range
-        # Based on your bounds: plane_x: -450 to 750, plane_z: 50 to 200
         movement_ranges = [
-            # dx values (left/right movement)
-            (0, 0), (-50, 0), (-100, 0), (-200, 0), (-400, 0),  # Left movement
-            (50, 0), (100, 0), (200, 0), (400, 0),              # Right movement
-            # dz values (up/down movement) 
-            (0, -25), (0, -50), (0, -75), (0, -100),           # Up movement
-            (0, 25), (0, 50), (0, 75), (0, 100),               # Down movement
-            # Combined movements
-            (-100, -50), (100, 50), (-200, 25), (200, -25),    # Diagonal
+            (0, 0), (-50, 0), (-100, 0), (-200, 0), (-400, 0), 
+            (50, 0), (100, 0), (200, 0), (400, 0),
+            (0, -25), (0, -50), (0, -75), (0, -100),
+            (0, 25), (0, 50), (0, 75), (0, 100),
+            (-100, -50), (100, 50), (-200, 25), (200, -25),    
         ]
         
-        # Test at different starting positions across the game world
         test_positions = [
-            (-400, 0, 60),    # Far left, low
-            (0, 500, 125),    # Center
-            (700, 1000, 190), # Far right, high
-            (-200, 200, 75),  # Mid-left
-            (500, 800, 150),  # Mid-right
+            (-400, 0, 60),   
+            (0, 500, 125),   
+            (700, 1000, 190),
+            (-200, 200, 75),  
+            (500, 800, 150),  
         ]
         
-        for show_player in [False, True]:  # Both menu and game modes
+        for show_player in [False, True]: 
             for start_x, start_y, start_z in test_positions:
                 for dx, dz in movement_ranges:
                     update_map_numba(start_x, start_y, start_z, 0, show_player, dx, dz, 
                                    test_W_data, test_S_data, map.SECTOR_NUM, map.GROUP_NUM)
-        
-        print("  Warming up 3D rendering across full view range...")
-        # Test viewing angles and positions across full game range
         viewing_scenarios = []
         
-        # Different positions across the map
         for x in [-400, -200, 0, 200, 400, 700]:
             for y in [0, 500, 1000, 2000]:
                 for z in [60, 100, 125, 150, 190]:
@@ -103,25 +89,20 @@ def warmup_numba_functions():
                         # Different look angles (up/down)
                         for look in [160, 170, 180, 190, 200]:
                             viewing_scenarios.append((x, y, z, angle, look))
-        
-        # Sample a subset to avoid taking too long
-        import random
-        sampled_scenarios = random.sample(viewing_scenarios, min(50, len(viewing_scenarios)))
+
+        sampled_scenarios = sample(viewing_scenarios, min(50, len(viewing_scenarios)))
         
         for show_player in [False, True]:
             for player_x, player_y, player_z, player_a, player_l in sampled_scenarios:
                 draw3d_numba(player_x, player_y, player_z, player_a, player_l, show_player, 
                             test_framebuffer, test_W_data, test_S_data, test_S_surf, 
                             map.SECTOR_NUM, width, height, focal_lenght)
-        
-        print("  Warming up collision detection across full range...")
-        # Test collisions at various positions
-        for x in range(-450, 751, 100):  # Full x range
-            for z in range(50, 201, 25):   # Full z range
-                for y in [0, 500, 1000]:    # Different y positions
+
+        for x in range(-450, 751, 100):  
+            for z in range(50, 201, 25):   
+                for y in [0, 500, 1000]:  
                     collisions_numba(x, y, z, test_S_data, test_W_data, map.SECTOR_NUM)
-        
-        print("  Warming up wall rendering...")
+
         draw_wall_numba(100, 200, 100, 150, 50, 100, 255, 255, 255, 0, 0, 0, 
                        test_framebuffer, test_S_data, test_S_surf, width, height)
         
@@ -210,7 +191,7 @@ def player_movement_numba(plane_x_val, plane_z_val, fps_val):
     return dx, dz
 
 def playerMovement():
-    global fps
+    global fps, speed
     buttons = pygame.key.get_pressed()
     dx = 0
     dz = 0
@@ -264,9 +245,9 @@ def update_map_numba(player_x, player_y, player_z, player_a, show_player, dx, dz
             if r[groupid, 0] == 0:
                 r[groupid, 0] = np.random.randint(-700, 700)
                 if plane_y_local < 50000:
-                    r[groupid, 1] = np.random.randint(1000, 2500)
+                    r[groupid, 1] = np.random.randint(1700, 3200)
                 else:
-                    r[groupid, 1] = np.random.randint(2000, 4000)
+                    r[groupid, 1] = np.random.randint(3000, 5000)
             
             for w in range(wall_start, wall_end):
                 if W_data[w, 1] < player_y - 100 or W_data[w, 3] < player_y - 100:
@@ -628,9 +609,11 @@ def ensure_initialization():
         loadMap()
     ensure_numba_warmup()
 
-def draw3D(player_x, player_y, player_z, player_a, player_l, showPlayer, framebuffer):
+def draw3D(player_x, player_y, player_z, player_a, player_l, showPlayer, framebuffer, difficulty):
     """Main drawing function that calls the Numba-optimized version"""
     # Ensure everything is initialized
+    global speed
+    speed = 600 + difficulty * 300
     ensure_initialization()
     
     try:
