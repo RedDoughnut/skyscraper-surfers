@@ -4,6 +4,7 @@ from pygame import mixer
 import math
 import time
 import sys
+import numpy
 
 def main():
     pygame.init()
@@ -74,7 +75,7 @@ def main():
 
             window.blit(backdrop, (-750 + player_x / 100, int(player_l*6) - 180*6 - backdrop.get_height() / 2))
 
-            framebuffer = pygame.surfarray.array3d(window)
+            framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
             framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (0, 217, 38)
             framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
             pygame.surfarray.blit_array(window, framebuffer)
