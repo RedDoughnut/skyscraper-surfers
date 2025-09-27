@@ -67,18 +67,19 @@ def main():
                 running = False
         start_frametime = time.time()
         buttons = pygame.key.get_pressed()
+        print(-750 + player_x / 100, int(player_l*6) - 180*6 - backdrop.get_height() / 2)
         if onTitleScreen:
-            window.fill((0,0,0))
             
             if True: #screen==0:
                 player_x = player_x + dx; player_y = player_y + dy; player_z = player_z + dz
 
-            window.blit(backdrop, (-750 + player_x / 100, int(player_l*6) - 180*6 - backdrop.get_height() / 2))
+            window.fill((0,0,0))
 
             framebuffer = numpy.zeros((width, height, 3), numpy.uint8)
             framebuffer[:, height // 2 + int(player_l*6) - 180*6: height] = (0, 217, 38)
             framebuffer = engine.draw3D(player_x, player_y, player_z, player_a, player_l, False, framebuffer)
             pygame.surfarray.blit_array(window, framebuffer)
+            window.blit(backdrop, (-750 + player_x / 100, int(player_l*6) - 180*6 - backdrop.get_height() / 2))
 
             buttons = pygame.key.get_pressed()
             if buttons[pygame.K_DOWN] and selectedOption<3 and screen == 0 and time.time() - time_since_last>0.2:
