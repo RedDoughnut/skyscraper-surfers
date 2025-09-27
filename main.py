@@ -88,7 +88,7 @@ def main():
                 running = False
         buttons = pygame.key.get_pressed()
         if dead:
-            if buttons[pygame.K_q]:
+            if buttons[pygame.K_q] or buttons[pygame.K_SPACE] or buttons[pygame.K_RETURN]:
                 dead = False
                 score = 0
                 onTitleScreen = True
