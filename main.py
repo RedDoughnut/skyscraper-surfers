@@ -50,7 +50,6 @@ def main():
     difficulty = 1  # 0 - easy, 1 - medium, 2 - hard
     score = 0
     highscore = read_highscore()
-    print(highscore)
     player_x = 150
     player_y = 0
     player_z = -50
@@ -72,6 +71,7 @@ def main():
     dz = 0
 
     time_since_last = 0
+    time_since_last2 = 0
     time_since_last_click = 0
     running = True
     rendertime = 0
@@ -88,11 +88,12 @@ def main():
                 running = False
         buttons = pygame.key.get_pressed()
         if dead:
-            if buttons[pygame.K_q] or buttons[pygame.K_SPACE] or buttons[pygame.K_RETURN]:
+            if buttons[pygame.K_q]:# or buttons[pygame.K_SPACE] or buttons[pygame.K_RETURN]:
                 dead = False
                 score = 0
                 onTitleScreen = True
                 screen = 0
+                time_since_last2 = time.time()
             died_text = large_font.render("YOU DIED", True, (255,0,0))
             score_text = font.render(f"SCORE: {round(score)}", True, (255,0,0))
             quit_text = font.render("PRESS Q TO QUIT TO MAIN MENU", True, (255,0,0))
@@ -147,7 +148,7 @@ def main():
                     click.play()
                     time_since_last_click = time.time()
                 time_since_last = time.time()
-            if buttons[pygame.K_RETURN] or buttons[pygame.K_SPACE] and screen == 0:
+            if buttons[pygame.K_RETURN] or buttons[pygame.K_SPACE] and screen == 0 and time.time() - time_since_last2>0.5:
                 if sfx and time.time() - time_since_last_click>0.3:
                     click.play()
                     time_since_last_click = time.time()
@@ -159,6 +160,7 @@ def main():
                     player_y = 0
                     score = 0
                     player_z = -50
+                    time_since_last = time.time()
                     player_a = 0 
                     player_l = 180
                     if difficulty == 0:
